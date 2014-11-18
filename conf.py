@@ -19,7 +19,7 @@ tagline = 'Add intelligent tagline here'
 description = 'This is an awesome blog'
 
 # Change this to your name
-author = 'Jonas, Lukas Strassel'
+author = 'Lukas Strassel'
 
 # Change this to your copyright string
 copyright = '2014, ' + author
