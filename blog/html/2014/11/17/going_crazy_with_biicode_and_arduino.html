@@ -28,7 +28,7 @@
         <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
         <script src="../../../_static/plugins.js"></script>
         <script src="../../../_static/main.js"></script>
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+        <link rel="prev" title="Gesture recognition with Arduino" href="../19/gesture_recognition_with_arduino.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
         VERSION:     '1.5',
@@ -73,8 +73,8 @@
 that Arduino IDE hat no auto-complete,
 some awkward java/c mix programming language and an even worse file managing system
 (it isn&#8217;t even possible to use subdirectorys without problems).
-So at this point of awareness, most people try to use Eclipse which solves some of the problems mentioned above.
-But u still won&#8217;t be able to use c and the subdirectory problem still exists.</p>
+So at this point of awareness, most people try to use Eclipse which solves some of the problems mentioned above,
+but u still won&#8217;t be able to use c/c++ and the subdirectory problem still exists.</p>
 <p>So this is the moment to give <a class="reference external" href="http://biicode.com">biicode</a> a try:</p>
 <p>Simply install biicode via <a class="reference external" href="http://www.biicode.com/downloads">download biicode</a> and you&#8217;re ready to start. First we&#8217;ll write
 a program to serial read from our arduino:</p>
@@ -85,7 +85,7 @@ a program to serial read from our arduino:</p>
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
 <span class="p">{</span>
 <span class="n">string</span> <span class="n">input</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
-<span class="c1">//start delimeter, seperator, PORT, baudrate</span>
+<span class="c1">//start tag, seperator, endtag, baudrate</span>
 <span class="n">serial</span> <span class="n">serialport</span><span class="p">(</span><span class="sc">&#39;$&#39;</span><span class="p">,</span> <span class="sc">&#39;\n&#39;</span><span class="p">,</span> <span class="s">&quot;COM4&quot;</span><span class="p">,</span> <span class="mi">115200</span><span class="p">);</span>
 <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">){</span>
   <span class="k">if</span><span class="p">(</span><span class="n">input</span> <span class="o">=</span> <span class="n">serialport</span><span class="p">.</span><span class="n">read</span><span class="p">())</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
@@ -95,7 +95,7 @@ a program to serial read from our arduino:</p>
 </div>
 <div class="line-block">
 <div class="line">The magic is done.</div>
-<div class="line">David&#8217;s serial library expects a starting delimiter and an separator which is a pretty good practice for package alignment.</div>
+<div class="line">David&#8217;s serial library expects a starting character and an end character which is a pretty good practice for package alignment.</div>
 <div class="line">Let&#8217;s enjoy the result - we only have to compile and run the application.</div>
 </div>
 <div class="highlight-c"><div class="highlight"><pre>bii find      #downloads dependencies
@@ -119,9 +119,14 @@ bii cpp:build #builds the project
                 Schlagwörter:
                 <a href="../../../tags/biicode.html">biicode</a>, <a href="../../../tags/arduino.html">arduino</a>, <a href="../../../tags/cpp.html">cpp</a></span>
         </div>
-        </div></article><aside class="sidebar"><section><div class="widget">
+        </div><ul class="related clearfix">
+            <li class="left"> &laquo; <a href="../19/gesture_recognition_with_arduino.html">Gesture recognition with Arduino</a></li>
+            <li class="right"></li>
+        </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Aktuell</h1>
     <ul><li>
+            <a href="../19/gesture_recognition_with_arduino.html">Gesture recognition with Arduino</a>
+        </li><li>
             <a href="#">Going crazy with biicode and arduino</a>
         </li></ul>
 </div>

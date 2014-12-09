@@ -5,8 +5,91 @@
         <link>https://sakulstra.github.io/</link>
         <description>Add intelligent tagline here</description>
         <language>en-us</language>
-        <pubDate>Mon, 17 Nov 2014 00:00:00 +0100</pubDate>
+        <pubDate>Wed, 19 Nov 2014 00:00:00 +0100</pubDate>
         
+        <item>
+            <link>https://sakulstra.github.io/2014/11/19/gesture_recognition_with_arduino.html</link>
+            <guid>https://sakulstra.github.io/2014/11/19/gesture_recognition_with_arduino.html</guid>
+            <title><![CDATA[Gesture recognition with Arduino]]></title>
+            <description><![CDATA[<h1>Gesture recognition with Arduino</h1>
+<p>There’s a (not so)new star out in the endless wideness of open source software.
+<a class="reference external" href="https://github.com/nickgillian/grt">GRT</a> by <a class="reference external" href="http://www.nickgillian.com">Nick Gillian</a> is a gesture recognition library with a rich collection of pre and post processing filter besides a huge variety of build in gesture recognition algorithms.</p>
+<p>The GRT library itself is currently published on biicode, but the GRT-GUI isn’t cause it’s highly dependent on qt. So what we want to do now is creating a pipeline from Arduino to GRT-GUI.</p>
+<p>The GRT-GUI was designed to communicate via OSC, but we usually use serial communication at arduino/hardware-side. This forces us to read from serial and forward via OSC to GRT.</p>
+<dl class="docutils">
+<dt>The following program consists of 3 parts:</dt>
+<dd><ol class="first last arabic simple">
+<li>establishing a serial connection to your arduino</li>
+<li>Continuously read data from serial</li>
+<li>use GRT-GUI to read and process the data</li>
+</ol>
+</dd>
+</dl>
+<div class="highlight-c"><div class="highlight"><pre><span class="cp">#include &lt;string&gt;</span>
+<span class="cp">#include &lt;iostream&gt;</span>
+<span class="cp">#include &lt;stdlib.h&gt;</span>
+<span class="cp">#include "david/serial_cpp/serial.h"</span>
+<span class="cp">#include "Maria/oscpack/osc/OscOutboundPacketStream.h"</span>
+<span class="cp">#include "Maria/oscpack/ip/UdpSocket.h"</span>
+
+<span class="cp">#define ADDRESS "127.0.0.1"</span>
+<span class="cp">#define PORT 5000</span>
+<span class="cp">#define OUTPUT_BUFFER_SIZE 1024</span>
+<span class="cp">#define COMPORT "/dev/ttyUSB0"</span>
+<span class="cp">#define BAUDRATE 115200</span>
+
+<span class="n">using</span> <span class="n">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="c1">//open udp socket for osc</span>
+  <span class="n">UdpTransmitSocket</span> <span class="n">transmitSocket</span><span class="p">(</span> <span class="n">IpEndpointName</span><span class="p">(</span> <span class="n">ADDRESS</span><span class="p">,</span> <span class="n">PORT</span> <span class="p">)</span> <span class="p">);</span>
+  <span class="c1">//open serialport for arduino communication</span>
+  <span class="c1">//expects arduino messages in following form: $value1\tvalue2\tvalue2\n</span>
+  <span class="n">serial</span> <span class="n">serialport</span><span class="p">(</span><span class="sc">'$'</span><span class="p">,</span> <span class="sc">'\n'</span><span class="p">,</span> <span class="n">COMPORT</span><span class="p">,</span> <span class="n">BAUDRATE</span><span class="p">);</span>
+  <span class="n">string</span> <span class="n">input</span> <span class="o">=</span> <span class="s">""</span><span class="p">;</span>
+  <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">){</span>
+    <span class="n">input</span> <span class="o">=</span> <span class="n">serialport</span><span class="p">.</span><span class="n">read</span><span class="p">();</span> <span class="c1">//read a message</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">input</span> <span class="o">!=</span> <span class="s">""</span><span class="p">){</span>
+      <span class="c1">//begin OSC message</span>
+      <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="n">OUTPUT_BUFFER_SIZE</span><span class="p">];</span>
+      <span class="n">osc</span><span class="o">::</span><span class="n">OutboundPacketStream</span> <span class="n">p</span><span class="p">(</span> <span class="n">buffer</span><span class="p">,</span> <span class="n">OUTPUT_BUFFER_SIZE</span> <span class="p">);</span>
+      <span class="n">p</span> <span class="o">&lt;&lt;</span> <span class="n">osc</span><span class="o">::</span><span class="n">BeginBundleImmediate</span> <span class="o">&lt;&lt;</span> <span class="n">osc</span><span class="o">::</span><span class="n">BeginMessage</span><span class="p">(</span> <span class="s">"/Data"</span> <span class="p">);</span>
+
+
+      <span class="kt">char</span> <span class="n">seps</span><span class="p">[]</span> <span class="o">=</span> <span class="s">"</span><span class="se">\t</span><span class="s">"</span><span class="p">;</span>
+      <span class="kt">char</span> <span class="o">*</span><span class="n">token</span><span class="p">;</span>
+      <span class="c1">//token points to &amp;input</span>
+      <span class="n">token</span> <span class="o">=</span> <span class="n">strtok</span><span class="p">(</span> <span class="o">&amp;</span><span class="n">input</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">seps</span> <span class="p">);</span>
+      <span class="k">while</span><span class="p">(</span> <span class="n">token</span> <span class="o">!=</span> <span class="nb">NULL</span> <span class="p">)</span>
+      <span class="p">{</span>
+        <span class="c1">//add value inside token to osc message</span>
+        <span class="n">p</span> <span class="o">&lt;&lt;</span> <span class="n">atof</span><span class="p">(</span><span class="n">token</span><span class="p">);</span>
+        <span class="c1">//token points to next occurence</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">strtok</span><span class="p">(</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">seps</span> <span class="p">);</span>
+      <span class="p">}</span>
+      <span class="c1">//end osc message</span>
+      <span class="n">p</span> <span class="o">&lt;&lt;</span> <span class="n">osc</span><span class="o">::</span><span class="n">EndMessage</span> <span class="o">&lt;&lt;</span> <span class="n">osc</span><span class="o">::</span><span class="n">EndBundle</span><span class="p">;</span>
+      <span class="c1">//send message via udp</span>
+      <span class="n">transmitSocket</span><span class="p">.</span><span class="n">Send</span><span class="p">(</span> <span class="n">p</span><span class="p">.</span><span class="n">Data</span><span class="p">(),</span> <span class="n">p</span><span class="p">.</span><span class="n">Size</span><span class="p">()</span> <span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Biicode leverages this process by reducing the pain of downloading and compiling external dependencies. With a simple:</p>
+<div class="highlight-c"><div class="highlight"><pre>bii find      #downloads dependencies
+bii cpp:build #builds the project
+</pre></div>
+</div>
+<p>we can start our program and you will hopefully see the data-stream in GRT-GUI.</p>
+]]></description>
+            <category><![CDATA[ biicode ]]></category>
+            <category><![CDATA[ arduino ]]></category>
+             <pubDate>Wed, 19 Nov 2014 00:00:00 +0100</pubDate>
+        </item>
+    
         <item>
             <link>https://sakulstra.github.io/2014/11/17/going_crazy_with_biicode_and_arduino.html</link>
             <guid>https://sakulstra.github.io/2014/11/17/going_crazy_with_biicode_and_arduino.html</guid>
@@ -16,8 +99,8 @@
 that Arduino IDE hat no auto-complete,
 some awkward java/c mix programming language and an even worse file managing system
 (it isn’t even possible to use subdirectorys without problems).
-So at this point of awareness, most people try to use Eclipse which solves some of the problems mentioned above.
-But u still won’t be able to use c and the subdirectory problem still exists.</p>
+So at this point of awareness, most people try to use Eclipse which solves some of the problems mentioned above,
+but u still won’t be able to use c/c++ and the subdirectory problem still exists.</p>
 <p>So this is the moment to give <a class="reference external" href="http://biicode.com">biicode</a> a try:</p>
 <p>Simply install biicode via <a class="reference external" href="http://www.biicode.com/downloads">download biicode</a> and you’re ready to start. First we’ll write
 a program to serial read from our arduino:</p>
@@ -28,7 +111,7 @@ a program to serial read from our arduino:</p>
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
 <span class="p">{</span>
 <span class="n">string</span> <span class="n">input</span> <span class="o">=</span> <span class="s">""</span><span class="p">;</span>
-<span class="c1">//start delimeter, seperator, PORT, baudrate</span>
+<span class="c1">//start tag, seperator, endtag, baudrate</span>
 <span class="n">serial</span> <span class="n">serialport</span><span class="p">(</span><span class="sc">'$'</span><span class="p">,</span> <span class="sc">'\n'</span><span class="p">,</span> <span class="s">"COM4"</span><span class="p">,</span> <span class="mi">115200</span><span class="p">);</span>
 <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">){</span>
   <span class="k">if</span><span class="p">(</span><span class="n">input</span> <span class="o">=</span> <span class="n">serialport</span><span class="p">.</span><span class="n">read</span><span class="p">())</span> <span class="o">!=</span> <span class="s">""</span><span class="p">)</span>
@@ -38,7 +121,7 @@ a program to serial read from our arduino:</p>
 </div>
 <div class="line-block">
 <div class="line">The magic is done.</div>
-<div class="line">David’s serial library expects a starting delimiter and an separator which is a pretty good practice for package alignment.</div>
+<div class="line">David’s serial library expects a starting character and an end character which is a pretty good practice for package alignment.</div>
 <div class="line">Let’s enjoy the result - we only have to compile and run the application.</div>
 </div>
 <div class="highlight-c"><div class="highlight"><pre>bii find      #downloads dependencies
