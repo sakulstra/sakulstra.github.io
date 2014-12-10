@@ -21,7 +21,7 @@ a program to serial read from our arduino:
   int main()
   {
   string input = "";
-  //start tag, seperator, endtag, baudrate
+  //start tag, end tag, comport, baudrate
   serial serialport('$', '\n', "COM4", 115200);
   while(1){
     if(input = serialport.read()) != "")

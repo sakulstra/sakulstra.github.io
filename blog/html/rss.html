@@ -84,7 +84,8 @@ bii cpp:build #builds the project
 </pre></div>
 </div>
 <p>we can start our program and you will hopefully see the data-stream in GRT-GUI.</p>
-]]></description>
+<p>Here’s a simple example video, where I used a boarduino with an mpu6050 which constantly streams the quaternion rotation data and the 3-axis acceleration data via serial to the pc.</p>
+<iframe width="560" height="315" src="//www.youtube.com/embed/CW98sgjlb8w" frameborder="0" allowfullscreen=""/>]]></description>
             <category><![CDATA[ biicode ]]></category>
             <category><![CDATA[ arduino ]]></category>
              <pubDate>Wed, 19 Nov 2014 00:00:00 +0100</pubDate>
@@ -111,7 +112,7 @@ a program to serial read from our arduino:</p>
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
 <span class="p">{</span>
 <span class="n">string</span> <span class="n">input</span> <span class="o">=</span> <span class="s">""</span><span class="p">;</span>
-<span class="c1">//start tag, seperator, endtag, baudrate</span>
+<span class="c1">//start tag, end tag, comport, baudrate</span>
 <span class="n">serial</span> <span class="n">serialport</span><span class="p">(</span><span class="sc">'$'</span><span class="p">,</span> <span class="sc">'\n'</span><span class="p">,</span> <span class="s">"COM4"</span><span class="p">,</span> <span class="mi">115200</span><span class="p">);</span>
 <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">){</span>
   <span class="k">if</span><span class="p">(</span><span class="n">input</span> <span class="o">=</span> <span class="n">serialport</span><span class="p">.</span><span class="n">read</span><span class="p">())</span> <span class="o">!=</span> <span class="s">""</span><span class="p">)</span>

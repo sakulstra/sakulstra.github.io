@@ -75,6 +75,13 @@ Biicode leverages this process by reducing the pain of downloading and compiling
 
 we can start our program and you will hopefully see the data-stream in GRT-GUI.
 
+Here's a simple example video, where I used a boarduino with an mpu6050 which constantly streams the quaternion rotation data and the 3-axis acceleration data via serial to the pc.
+
+.. raw:: html
+
+	<iframe width="560" height="315" src="//www.youtube.com/embed/CW98sgjlb8w" frameborder="0" allowfullscreen></iframe>
+
+
 .. _GRT: https://github.com/nickgillian/grt
 .. _Nick Gillian: http://www.nickgillian.com
 

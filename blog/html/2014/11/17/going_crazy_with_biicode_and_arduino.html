@@ -85,7 +85,7 @@ a program to serial read from our arduino:</p>
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
 <span class="p">{</span>
 <span class="n">string</span> <span class="n">input</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
-<span class="c1">//start tag, seperator, endtag, baudrate</span>
+<span class="c1">//start tag, end tag, comport, baudrate</span>
 <span class="n">serial</span> <span class="n">serialport</span><span class="p">(</span><span class="sc">&#39;$&#39;</span><span class="p">,</span> <span class="sc">&#39;\n&#39;</span><span class="p">,</span> <span class="s">&quot;COM4&quot;</span><span class="p">,</span> <span class="mi">115200</span><span class="p">);</span>
 <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">){</span>
   <span class="k">if</span><span class="p">(</span><span class="n">input</span> <span class="o">=</span> <span class="n">serialport</span><span class="p">.</span><span class="n">read</span><span class="p">())</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
