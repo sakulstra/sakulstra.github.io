@@ -13,7 +13,7 @@ import tinkerer.paths
 project = 'Sakulstra'
 
 # Change this to the tagline of your blog
-tagline = 'Add intelligent tagline here'
+tagline = 'cutting the edge'
 
 # Change this to the description of your blog
 description = 'This is an awesome blog'
