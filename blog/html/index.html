@@ -36,7 +36,7 @@
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
-    </script><script type="text/javascript" src="_static/underscore.js"></script><script type="text/javascript" src="_static/doctools.js"></script>
+    </script><script type="text/javascript" src="_static/underscore.js"></script><script type="text/javascript" src="_static/doctools.js"></script><script type="text/javascript" src="_static/disqus.js"></script>
 
     <script type="text/javascript">
         $(document).ready(function () {
@@ -65,90 +65,6 @@
                 </li>
               </ul>
           </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
-            <span>December 12, 2014</span>
-        </div>
-        <div class="section">
-            <h1><a href="2014/12/12/revenge.html">revenge</a></h1>
-<form name="countdownform">
-<p>
-<input size="75" name="countdowninput"/>
-</p>
-</form>
-<script language="JavaScript">
-// Ziel-Datum in MEZ
-var jahr=2015, monat=1, tag=12, stunde=22, minute=22, sekunde=22;
-var zielDatum=new Date(jahr,monat-1,tag,stunde,minute,sekunde);
-
-function countdown() {
-startDatum=new Date(); // Aktuelles Datum
-
-// Countdown berechnen und anzeigen, bis Ziel-Datum erreicht ist
-if(startDatum&amp;lt;zielDatum)  {
-
-var jahre=0, monate=0, tage=0, stunden=0, minuten=0, sekunden=0;
-
-// Jahre
-while(startDatum&amp;lt;zielDatum) {
-jahre++;
-startDatum.setFullYear(startDatum.getFullYear()+1);
-}
-startDatum.setFullYear(startDatum.getFullYear()-1);
-jahre--;
-
-// Monate
-while(startDatum&amp;lt;zielDatum) {
-monate++;
-startDatum.setMonth(startDatum.getMonth()+1);
-}
-startDatum.setMonth(startDatum.getMonth()-1);
-monate--;
-
-// Tage
-while(startDatum.getTime()+(24*60*60*1000)&amp;lt;zielDatum) {
-tage++;
-startDatum.setTime(startDatum.getTime()+(24*60*60*1000));
-}
-
-// Stunden
-stunden=Math.floor((zielDatum-startDatum)/(60*60*1000));
-startDatum.setTime(startDatum.getTime()+stunden*60*60*1000);
-
-// Minuten
-minuten=Math.floor((zielDatum-startDatum)/(60*1000));
-startDatum.setTime(startDatum.getTime()+minuten*60*1000);
-
-// Sekunden
-sekunden=Math.floor((zielDatum-startDatum)/1000);
-
-// Anzeige formatieren
-(jahre!=1)?jahre=jahre+" Jahre,  ":jahre=jahre+" Jahr,  ";
-(monate!=1)?monate=monate+" Monate,  ":monate=monate+" Monat,  ";
-(tage!=1)?tage=tage+" Tage,  ":tage=tage+" Tag,  ";
-(stunden!=1)?stunden=stunden+" Stunden,  ":stunden=stunden+" Stunde,  ";
-(minuten!=1)?minuten=minuten+" Minuten  und  ":minuten=minuten+" Minute  und  ";
-if(sekunden&amp;lt;10) sekunden="0"+sekunden;
-(sekunden!=1)?sekunden=sekunden+" Sekunden":sekunden=sekunden+" Sekunde";
-
-document.countdownform.countdowninput.value=
-jahre+monate+tage+stunden+minuten+sekunden;
-
-setTimeout('countdown()',200);
-}
-// Anderenfalls alles auf Null setzen
-else document.countdownform.countdowninput.value=
-"0 Jahre,  0 Monate,  0 Tage,  0 Stunden,  0 Minuten  und  00 Sekunden";
-}
-countdown();
-</script><a class="reference internal image-reference" href="_images/revenge.jpg"><img alt="alternate text" class="align-center" src="_images/revenge.jpg" style="width: 150.0px; height: 150.0px;"/></a>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Von Lukas Strassel</span>
-        </div>
-        
-        
-        </div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>November 19, 2014</span>
         </div>
         <div class="section">
@@ -238,7 +154,9 @@ bii cpp:build #builds the project
                 <a href="categories/biicode.html">biicode</a>, <a href="categories/arduino.html">arduino</a></span>
         </div>
         
-        </div><div class="separator post_separator"></div><div class="timestamp postmeta">
+        <div class="comments">
+            <a href="https://sakulstra.github.io/2014/11/19/gesture_recognition_with_arduino.html#disqus_thread" data-disqus-identifier="2014/11/19/gesture_recognition_with_arduino">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>November 17, 2014</span>
         </div>
         <div class="section">
@@ -293,13 +211,13 @@ bii cpp:build #builds the project
                 Schlagwörter:
                 <a href="tags/biicode.html">biicode</a>, <a href="tags/arduino.html">arduino</a>, <a href="tags/cpp.html">cpp</a></span>
         </div>
-        </div><div class="archive_link">
+        <div class="comments">
+            <a href="https://sakulstra.github.io/2014/11/17/going_crazy_with_biicode_and_arduino.html#disqus_thread" data-disqus-identifier="2014/11/17/going_crazy_with_biicode_and_arduino">Leave a comment</a>
+        </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Archiv &mdash; </a>
     </div></article><aside class="sidebar"><section><div class="widget">
     <h1>Aktuell</h1>
     <ul><li>
-            <a href="2014/12/12/revenge.html">revenge</a>
-        </li><li>
             <a href="2014/11/19/gesture_recognition_with_arduino.html">Gesture recognition with Arduino</a>
         </li><li>
             <a href="2014/11/17/going_crazy_with_biicode_and_arduino.html">Going crazy with biicode and arduino</a>
@@ -315,7 +233,7 @@ bii cpp:build #builds the project
 
         <div class="footer-container" role="contentinfo"><footer class="wrapper">&copy; Copyright 2014, Lukas Strassel. Powered by <a href="http://www.tinkerer.me/">Tinkerer</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.</footer></div> <!-- footer-container -->
 
-      </div> <!--! end of #container --><!--[if lt IE 7 ]>
+      </div> <!--! end of #container --><script type="text/javascript">    var disqus_shortname = "sakulstra";    disqus_count();</script><!--[if lt IE 7 ]>
           <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
           <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
         <![endif]-->

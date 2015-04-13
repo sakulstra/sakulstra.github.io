@@ -5,88 +5,8 @@
         <link>https://sakulstra.github.io/</link>
         <description>cutting the edge</description>
         <language>en-us</language>
-        <pubDate>Fri, 12 Dec 2014 00:00:00 +0100</pubDate>
+        <pubDate>Wed, 19 Nov 2014 00:00:00 +0100</pubDate>
         
-        <item>
-            <link>https://sakulstra.github.io/2014/12/12/revenge.html</link>
-            <guid>https://sakulstra.github.io/2014/12/12/revenge.html</guid>
-            <title><![CDATA[revenge]]></title>
-            <description><![CDATA[<h1>revenge</h1>
-<form name="countdownform">
-<p>
-<input size="75" name="countdowninput"/>
-</p>
-</form>
-<script language="JavaScript">
-// Ziel-Datum in MEZ
-var jahr=2015, monat=1, tag=12, stunde=22, minute=22, sekunde=22;
-var zielDatum=new Date(jahr,monat-1,tag,stunde,minute,sekunde);
-
-function countdown() {
-startDatum=new Date(); // Aktuelles Datum
-
-// Countdown berechnen und anzeigen, bis Ziel-Datum erreicht ist
-if(startDatum&amp;amp;lt;zielDatum)  {
-
-var jahre=0, monate=0, tage=0, stunden=0, minuten=0, sekunden=0;
-
-// Jahre
-while(startDatum&amp;amp;lt;zielDatum) {
-jahre++;
-startDatum.setFullYear(startDatum.getFullYear()+1);
-}
-startDatum.setFullYear(startDatum.getFullYear()-1);
-jahre--;
-
-// Monate
-while(startDatum&amp;amp;lt;zielDatum) {
-monate++;
-startDatum.setMonth(startDatum.getMonth()+1);
-}
-startDatum.setMonth(startDatum.getMonth()-1);
-monate--;
-
-// Tage
-while(startDatum.getTime()+(24*60*60*1000)&amp;amp;lt;zielDatum) {
-tage++;
-startDatum.setTime(startDatum.getTime()+(24*60*60*1000));
-}
-
-// Stunden
-stunden=Math.floor((zielDatum-startDatum)/(60*60*1000));
-startDatum.setTime(startDatum.getTime()+stunden*60*60*1000);
-
-// Minuten
-minuten=Math.floor((zielDatum-startDatum)/(60*1000));
-startDatum.setTime(startDatum.getTime()+minuten*60*1000);
-
-// Sekunden
-sekunden=Math.floor((zielDatum-startDatum)/1000);
-
-// Anzeige formatieren
-(jahre!=1)?jahre=jahre+" Jahre,  ":jahre=jahre+" Jahr,  ";
-(monate!=1)?monate=monate+" Monate,  ":monate=monate+" Monat,  ";
-(tage!=1)?tage=tage+" Tage,  ":tage=tage+" Tag,  ";
-(stunden!=1)?stunden=stunden+" Stunden,  ":stunden=stunden+" Stunde,  ";
-(minuten!=1)?minuten=minuten+" Minuten  und  ":minuten=minuten+" Minute  und  ";
-if(sekunden&amp;amp;lt;10) sekunden="0"+sekunden;
-(sekunden!=1)?sekunden=sekunden+" Sekunden":sekunden=sekunden+" Sekunde";
-
-document.countdownform.countdowninput.value=
-jahre+monate+tage+stunden+minuten+sekunden;
-
-setTimeout('countdown()',200);
-}
-// Anderenfalls alles auf Null setzen
-else document.countdownform.countdowninput.value=
-"0 Jahre,  0 Monate,  0 Tage,  0 Stunden,  0 Minuten  und  00 Sekunden";
-}
-countdown();
-</script><a class="reference internal image-reference" href="https://sakulstra.github.io/_images/revenge.jpg"><img alt="alternate text" class="align-center" src="https://sakulstra.github.io/_images/revenge.jpg" style="width: 150.0px; height: 150.0px;"/></a>
-]]></description>
-             <pubDate>Fri, 12 Dec 2014 00:00:00 +0100</pubDate>
-        </item>
-    
         <item>
             <link>https://sakulstra.github.io/2014/11/19/gesture_recognition_with_arduino.html</link>
             <guid>https://sakulstra.github.io/2014/11/19/gesture_recognition_with_arduino.html</guid>
