@@ -7,10 +7,9 @@ from rcssmin import cssmin
 import glob
 import os
 
-
-destPath = os.getcwd()+"/blog/html/_static"
-jsFiles = []
-cssFiles = []
+jsFiles = []		#container for js resources
+cssFiles = []		#container for css resources
+destPath = os.getcwd()+"/blog/html/_static"	#get path to static files(may be wrong for sphinx)
 
 def minifyCSSProc(srcText):
     return cssmin(srcText, keep_bang_comments=True)
@@ -20,14 +19,15 @@ def minifyJSProc(srcText):
 
 def processFiles(minifyProc, sourcePaths):
     for srcFile in sourcePaths:
-        with open(srcFile,'r+') as inputFile:
-        	srcText = inputFile.read()
-                minText = minifyProc(srcText)
-		inputFile.close()
-		os.remove(destPath+"/"+srcFile)
-		file = open(destPath+"/"+srcFile, 'w+')
-		file.write(minText)
-		file.close()
+        with open(srcFile,'r+') as inputFile:		#open file
+        	srcText = inputFile.read()		#read file
+                minText = minifyProc(srcText)		#minimize resources
+		inputFile.close()			#close file
+		os.remove(destPath+"/"+srcFile)		#remove file
+		
+		file = open(destPath+"/"+srcFile, 'w+')	#create new file
+		file.write(minText)			#write minimized content
+		file.close()				#close file
 
 def jsMinification(files):
     return processFiles(minifyJSProc, files)
@@ -36,15 +36,13 @@ def cssMinification(files):
     return processFiles(minifyCSSProc, files)
 
 def setup(app):
-	app.connect("build-finished", asset_compression)
+	app.connect("build-finished", asset_compression)#inject after build-finished to modify the generated(not original) resources
 
 def asset_compression(app, exception):
-	destPath = os.getcwd()+"/blog/html/_static"
-	os.chdir(destPath)
-	jsFiles = glob.glob("*.js")
-	jsFiles.remove("disqus.js")
-	print jsFiles
-	cssFiles = glob.glob("*.css")
-        jsMinification(jsFiles)
-        cssMinification(cssFiles)
+	os.chdir(destPath)				#change working directory
+	jsFiles = glob.glob("*.js")			#find all js files
+	jsFiles.remove("disqus.js")			#disqus wont't work minimized, cause the function names are used in the layout
+	cssFiles = glob.glob("*.css")			#find all css files
+        jsMinification(jsFiles)				#minify js
+        cssMinification(cssFiles)			#minify css
 	

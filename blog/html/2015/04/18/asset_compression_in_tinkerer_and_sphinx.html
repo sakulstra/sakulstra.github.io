@@ -1,0 +1,171 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="This is an awesome blog">
+        <meta name="viewport" content="width=device-width">
+        <title>asset compression in tinkerer and sphinx &mdash; Sakulstra</title>
+            <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/flat.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+            <link rel="stylesheet" href="../../../_static/font-awesome.min.css" type="text/css">
+        <link rel="shortcut icon" href="../../../_static/tinkerer.ico" /><!-- Load modernizr and JQuery -->
+        <script src="../../../_static/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+        <script src="../../../_static/plugins.js"></script>
+        <script src="../../../_static/main.js"></script>
+        <link rel="next" title="Gesture recognition with Arduino" href="../../../2014/11/19/gesture_recognition_with_arduino.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script type="text/javascript" src="../../../_static/underscore.js"></script><script type="text/javascript" src="../../../_static/doctools.js"></script><script type="text/javascript" src="../../../_static/disqus.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Scroll to content if on small screen
+            if (screen.width < 480)
+            {
+                $(document).scrollTop(document.getElementsByTagName("article")[0].offsetTop - 44);
+            }
+        });
+    </script></head>
+    <body role="document">
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+      <div id="container"><header role="banner">
+            <hgroup>
+              <h1><a href="../../../index.html">Sakulstra</a></h1><h2>cutting the edge</h2></hgroup>
+          </header>
+      <nav role="navigation">
+            <ul><li class="main-nav">
+                  <a href="../../../index.html">Home</a>
+                </li>
+              <li class="main-nav">
+                  <a href="../../../pages/about.html">About</a>
+                </li>
+              </ul>
+          </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>April 18, 2015</span>
+        </div>
+    <div class="section" id="asset-compression-in-tinkerer-and-sphinx">
+<h1>asset compression in tinkerer and sphinx</h1>
+<p>Asset compression is a major concern for nearly every complex web framework.
+Interestingly most static page frameworks don&#8217;t care about this, cause server response rates are blazing fast so asset compression for css, js and image resources is not worth the effort.</p>
+<p>This may be right in most cases, but especially in bad internet countries and even in suburban regions where the internet speed is reduced to dsl 1k and less it&#8217;s important to keep package size to a minimum.</p>
+<p>In order to reduce server response time and package size i created a simple tinkerer extension, which can also be used
+for sphinx with slight adjustments. Is simply takes the generated resources and overwrites them with their minified versions</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#Author: Lukas Strassel</span>
+<span class="c">#Extension for asset compression in tinkerer</span>
+<span class="c">#The proposed solution is based on http://swiftbend.com/blog/?page_id=79#.VTJTKOT7vtQ</span>
+<span class="kn">from</span> <span class="nn">slimit</span> <span class="kn">import</span> <span class="n">minify</span>
+<span class="kn">from</span> <span class="nn">rcssmin</span> <span class="kn">import</span> <span class="n">cssmin</span>
+
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+
+<span class="n">destPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span><span class="o">+</span><span class="s">&quot;/blog/html/_static&quot;</span>     <span class="c">#get path to static files(may be wrong for sphinx)</span>
+<span class="n">jsFiles</span> <span class="o">=</span> <span class="p">[]</span>            <span class="c">#container for js resources</span>
+<span class="n">cssFiles</span> <span class="o">=</span> <span class="p">[]</span>           <span class="c">#container for css resources</span>
+
+<span class="k">def</span> <span class="nf">minifyCSSProc</span><span class="p">(</span><span class="n">srcText</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">cssmin</span><span class="p">(</span><span class="n">srcText</span><span class="p">,</span> <span class="n">keep_bang_comments</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">minifyJSProc</span><span class="p">(</span><span class="n">srcText</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">minify</span><span class="p">(</span><span class="n">srcText</span><span class="p">,</span> <span class="n">mangle</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">mangle_toplevel</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">processFiles</span><span class="p">(</span><span class="n">minifyProc</span><span class="p">,</span> <span class="n">sourcePaths</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">srcFile</span> <span class="ow">in</span> <span class="n">sourcePaths</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">srcFile</span><span class="p">,</span><span class="s">&#39;r+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>           <span class="c">#open file</span>
+                <span class="n">srcText</span> <span class="o">=</span> <span class="n">inputFile</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>              <span class="c">#read file</span>
+                <span class="n">minText</span> <span class="o">=</span> <span class="n">minifyProc</span><span class="p">(</span><span class="n">srcText</span><span class="p">)</span>           <span class="c">#minimize resources</span>
+                <span class="n">inputFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>                       <span class="c">#close file</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">destPath</span><span class="o">+</span><span class="s">&quot;/&quot;</span><span class="o">+</span><span class="n">srcFile</span><span class="p">)</span>         <span class="c">#remove file</span>
+
+                <span class="nb">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">destPath</span><span class="o">+</span><span class="s">&quot;/&quot;</span><span class="o">+</span><span class="n">srcFile</span><span class="p">,</span> <span class="s">&#39;w+&#39;</span><span class="p">)</span> <span class="c">#create new file</span>
+                <span class="nb">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">minText</span><span class="p">)</span>                     <span class="c">#write minimized content</span>
+                <span class="nb">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>                            <span class="c">#close file</span>
+
+<span class="k">def</span> <span class="nf">jsMinification</span><span class="p">(</span><span class="n">files</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">processFiles</span><span class="p">(</span><span class="n">minifyJSProc</span><span class="p">,</span> <span class="n">files</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">cssMinification</span><span class="p">(</span><span class="n">files</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">processFiles</span><span class="p">(</span><span class="n">minifyCSSProc</span><span class="p">,</span> <span class="n">files</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s">&quot;build-finished&quot;</span><span class="p">,</span> <span class="n">asset_compression</span><span class="p">)</span><span class="c">#inject after build-finished to modify the generated(not original) resources</span>
+
+<span class="k">def</span> <span class="nf">asset_compression</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">exception</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">destPath</span><span class="p">)</span>                              <span class="c">#change working directory</span>
+        <span class="n">jsFiles</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s">&quot;*.js&quot;</span><span class="p">)</span>                     <span class="c">#find all js files</span>
+        <span class="n">jsFiles</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s">&quot;disqus.js&quot;</span><span class="p">)</span>                     <span class="c">#disqus wont&#39;t work minimized, cause the function names are used in the layout</span>
+        <span class="n">cssFiles</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s">&quot;*.css&quot;</span><span class="p">)</span>                   <span class="c">#find all css files</span>
+        <span class="n">jsMinification</span><span class="p">(</span><span class="n">jsFiles</span><span class="p">)</span>                         <span class="c">#minify js</span>
+        <span class="n">cssMinification</span><span class="p">(</span><span class="n">cssFiles</span><span class="p">)</span>                       <span class="c">#minify css</span>
+</pre></div>
+</div>
+</div>
+
+    <div class="postmeta">
+        <div class="author">
+            <span>Von Lukas Strassel</span>
+        </div>
+        <div class="categories">
+            <span>
+                Kategorien:
+                <a href="../../../categories/tinkerer.html">tinkerer</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Schlagwörter:
+                <a href="../../../tags/tinkerer.html">tinkerer</a>, <a href="../../../tags/asset_compression.html">asset_compression</a></span>
+        </div>
+        </div><ul class="related clearfix">
+            <li class="left"></li>
+            <li class="right"><a href="../../../2014/11/19/gesture_recognition_with_arduino.html">Gesture recognition with Arduino</a> &raquo; </li>
+        </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "sakulstra";    var disqus_identifier = "2015/04/18/asset_compression_in_tinkerer_and_sphinx";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
+    <h1>Aktuell</h1>
+    <ul><li>
+            <a href="#">asset compression in tinkerer and sphinx</a>
+        </li><li>
+            <a href="../../../2014/11/19/gesture_recognition_with_arduino.html">Gesture recognition with Arduino</a>
+        </li><li>
+            <a href="../../../2014/11/17/going_crazy_with_biicode_and_arduino.html">Going crazy with biicode and arduino</a>
+        </li></ul>
+</div>
+</section><section><div class="widget" id="searchbox" role="search">
+    <h1><a href="#searchbox">Search</a></h1>
+    <form action="../../../search.html" method="get">
+        <input type="text" name="q" />
+        <button type="submit"><span class="fa fa-search"></span></button>
+    </form>
+</div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
+
+        <div class="footer-container" role="contentinfo"><footer class="wrapper">&copy; Copyright 2014, Lukas Strassel. Powered by <a href="http://www.tinkerer.me/">Tinkerer</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.</footer></div> <!-- footer-container -->
+
+      </div> <!--! end of #container --><!--[if lt IE 7 ]>
+          <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+          <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+        <![endif]-->
+    </body>
+</html>

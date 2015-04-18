@@ -65,6 +65,84 @@
                 </li>
               </ul>
           </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>April 18, 2015</span>
+        </div>
+        <div class="section">
+            <h1><a href="2015/04/18/asset_compression_in_tinkerer_and_sphinx.html">asset compression in tinkerer and sphinx</a></h1>
+<p>Asset compression is a major concern for nearly every complex web framework.
+Interestingly most static page frameworks don’t care about this, cause server response rates are blazing fast so asset compression for css, js and image resources is not worth the effort.</p>
+<p>This may be right in most cases, but especially in bad internet countries and even in suburban regions where the internet speed is reduced to dsl 1k and less it’s important to keep package size to a minimum.</p>
+<p>In order to reduce server response time and package size i created a simple tinkerer extension, which can also be used
+for sphinx with slight adjustments. Is simply takes the generated resources and overwrites them with their minified versions</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#Author: Lukas Strassel</span>
+<span class="c">#Extension for asset compression in tinkerer</span>
+<span class="c">#The proposed solution is based on http://swiftbend.com/blog/?page_id=79#.VTJTKOT7vtQ</span>
+<span class="kn">from</span> <span class="nn">slimit</span> <span class="kn">import</span> <span class="n">minify</span>
+<span class="kn">from</span> <span class="nn">rcssmin</span> <span class="kn">import</span> <span class="n">cssmin</span>
+
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+
+<span class="n">destPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span><span class="o">+</span><span class="s">"/blog/html/_static"</span>     <span class="c">#get path to static files(may be wrong for sphinx)</span>
+<span class="n">jsFiles</span> <span class="o">=</span> <span class="p">[]</span>            <span class="c">#container for js resources</span>
+<span class="n">cssFiles</span> <span class="o">=</span> <span class="p">[]</span>           <span class="c">#container for css resources</span>
+
+<span class="k">def</span> <span class="nf">minifyCSSProc</span><span class="p">(</span><span class="n">srcText</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">cssmin</span><span class="p">(</span><span class="n">srcText</span><span class="p">,</span> <span class="n">keep_bang_comments</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">minifyJSProc</span><span class="p">(</span><span class="n">srcText</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">minify</span><span class="p">(</span><span class="n">srcText</span><span class="p">,</span> <span class="n">mangle</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">mangle_toplevel</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">processFiles</span><span class="p">(</span><span class="n">minifyProc</span><span class="p">,</span> <span class="n">sourcePaths</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">srcFile</span> <span class="ow">in</span> <span class="n">sourcePaths</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">srcFile</span><span class="p">,</span><span class="s">'r+'</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>           <span class="c">#open file</span>
+                <span class="n">srcText</span> <span class="o">=</span> <span class="n">inputFile</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>              <span class="c">#read file</span>
+                <span class="n">minText</span> <span class="o">=</span> <span class="n">minifyProc</span><span class="p">(</span><span class="n">srcText</span><span class="p">)</span>           <span class="c">#minimize resources</span>
+                <span class="n">inputFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>                       <span class="c">#close file</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">destPath</span><span class="o">+</span><span class="s">"/"</span><span class="o">+</span><span class="n">srcFile</span><span class="p">)</span>         <span class="c">#remove file</span>
+
+                <span class="nb">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">destPath</span><span class="o">+</span><span class="s">"/"</span><span class="o">+</span><span class="n">srcFile</span><span class="p">,</span> <span class="s">'w+'</span><span class="p">)</span> <span class="c">#create new file</span>
+                <span class="nb">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">minText</span><span class="p">)</span>                     <span class="c">#write minimized content</span>
+                <span class="nb">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>                            <span class="c">#close file</span>
+
+<span class="k">def</span> <span class="nf">jsMinification</span><span class="p">(</span><span class="n">files</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">processFiles</span><span class="p">(</span><span class="n">minifyJSProc</span><span class="p">,</span> <span class="n">files</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">cssMinification</span><span class="p">(</span><span class="n">files</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">processFiles</span><span class="p">(</span><span class="n">minifyCSSProc</span><span class="p">,</span> <span class="n">files</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s">"build-finished"</span><span class="p">,</span> <span class="n">asset_compression</span><span class="p">)</span><span class="c">#inject after build-finished to modify the generated(not original) resources</span>
+
+<span class="k">def</span> <span class="nf">asset_compression</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">exception</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">destPath</span><span class="p">)</span>                              <span class="c">#change working directory</span>
+        <span class="n">jsFiles</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s">"*.js"</span><span class="p">)</span>                     <span class="c">#find all js files</span>
+        <span class="n">jsFiles</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s">"disqus.js"</span><span class="p">)</span>                     <span class="c">#disqus wont't work minimized, cause the function names are used in the layout</span>
+        <span class="n">cssFiles</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s">"*.css"</span><span class="p">)</span>                   <span class="c">#find all css files</span>
+        <span class="n">jsMinification</span><span class="p">(</span><span class="n">jsFiles</span><span class="p">)</span>                         <span class="c">#minify js</span>
+        <span class="n">cssMinification</span><span class="p">(</span><span class="n">cssFiles</span><span class="p">)</span>                       <span class="c">#minify css</span>
+</pre></div>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Von Lukas Strassel</span>
+        </div>
+        <div class="categories">
+            <span>
+                Kategorien:
+                <a href="categories/tinkerer.html">tinkerer</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Schlagwörter:
+                <a href="tags/tinkerer.html">tinkerer</a>, <a href="tags/asset_compression.html">asset_compression</a></span>
+        </div>
+        <div class="comments">
+            <a href="https://sakulstra.github.io/2015/04/18/asset_compression_in_tinkerer_and_sphinx.html#disqus_thread" data-disqus-identifier="2015/04/18/asset_compression_in_tinkerer_and_sphinx">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>November 19, 2014</span>
         </div>
         <div class="section">
@@ -218,6 +296,8 @@ bii cpp:build #builds the project
     </div></article><aside class="sidebar"><section><div class="widget">
     <h1>Aktuell</h1>
     <ul><li>
+            <a href="2015/04/18/asset_compression_in_tinkerer_and_sphinx.html">asset compression in tinkerer and sphinx</a>
+        </li><li>
             <a href="2014/11/19/gesture_recognition_with_arduino.html">Gesture recognition with Arduino</a>
         </li><li>
             <a href="2014/11/17/going_crazy_with_biicode_and_arduino.html">Going crazy with biicode and arduino</a>
