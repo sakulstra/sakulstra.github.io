@@ -18,7 +18,7 @@ def minifyCSSProc(srcText):
 def minifyJSProc(srcText):
     return minify(srcText, mangle=True, mangle_toplevel=True)
 
-def processFiles(minifyProc, sourcePaths, destPath):
+def processFiles(minifyProc, sourcePaths):
     for srcFile in sourcePaths:
         with open(srcFile,'r+') as inputFile:
         	srcText = inputFile.read()
@@ -29,11 +29,11 @@ def processFiles(minifyProc, sourcePaths, destPath):
 		file.write(minText)
 		file.close()
 
-def jsMinification(sourcePaths, destPath):
-    return processFiles(minifyJSProc, sourcePaths, destPath)
+def jsMinification(files):
+    return processFiles(minifyJSProc, files)
 
-def cssMinification(sourcePaths, destPath):
-    return processFiles(minifyCSSProc, sourcePaths, destPath)
+def cssMinification(files):
+    return processFiles(minifyCSSProc, files)
 
 def setup(app):
 	app.connect("build-finished", asset_compression)
@@ -42,7 +42,9 @@ def asset_compression(app, exception):
 	destPath = os.getcwd()+"/blog/html/_static"
 	os.chdir(destPath)
 	jsFiles = glob.glob("*.js")
+	jsFiles.remove("disqus.js")
+	print jsFiles
 	cssFiles = glob.glob("*.css")
-        jsMinification(jsFiles, destPath)
-        cssMinification(cssFiles, destPath)
+        jsMinification(jsFiles)
+        cssMinification(cssFiles)
 	
