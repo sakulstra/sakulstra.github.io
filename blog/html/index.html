@@ -65,6 +65,33 @@
                 </li>
               </ul>
           </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>April 19, 2015</span>
+        </div>
+        <div class="section">
+            <h1><a href="2015/04/19/low_budget_humidity_sensing.html">low budget humidity sensing</a></h1>
+<p>I tend to forget watering my plants, so I decided to create a own watering reminder.
+I thought it would be fun so simply turn on a led, when the ground is too dry.
+There are quite different soil meters which differ mostly in accuracy and current consumption.
+For simplicity I’ll stick with the one proposed by <a class="reference external" href="http://www.tiagoespinha.net/2014/05/project-how-to-easily-monitor-your-plants-soil-humidity/#more-689">tiago</a> as you can get it for around 1$ at <a class="reference external" href="http://www.aliexpress.com/item/R1B1-Soil-Hygrometer-Humidity-Detection-Module-Moisture-Water-Sensor-for-Arduino/1527477144.html">aliexpress</a> (in germany you wouldn’t even get the wires for this price).</p>
+<p>Sadly I could not find any English datasheet and as my Chinese is pretty bad, but the setup i really straight forward.
+There is a VCC and GND pin which have to be connected as always. Additionally there is a A0 pin for analog output, and D0 for digital output.
+For plotting graphs and stuff we need the analog output, but as I only want to turn on a light the D0 is enough.
+D0 turns HIGH as soon as a threshold is exceeded.</p>
+<p>So what i actually did is powering the sensor via a lithium-polymer battery with 3.7V, soldering a 1k resistor between D0 and the LED’s +.
+With this setup the light turns on when the threshold is exceeded. The threshold can be configured by rotating the blue screw.</p>
+<a class="reference internal image-reference" href="_images/resistor.JPG"><img alt="led resistor" src="_images/resistor.JPG" style="width: 100%;"/></a>
+<a class="reference internal image-reference" href="_images/setup.JPG"><img alt="full setup" src="_images/setup.JPG" style="width: 100%;"/></a>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Von Lukas Strassel</span>
+        </div>
+        
+        
+        <div class="comments">
+            <a href="https://sakulstra.github.io/2015/04/19/low_budget_humidity_sensing.html#disqus_thread" data-disqus-identifier="2015/04/19/low_budget_humidity_sensing">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>April 18, 2015</span>
         </div>
         <div class="section">
@@ -296,6 +323,8 @@ bii cpp:build #builds the project
     </div></article><aside class="sidebar"><section><div class="widget">
     <h1>Aktuell</h1>
     <ul><li>
+            <a href="2015/04/19/low_budget_humidity_sensing.html">low budget humidity sensing</a>
+        </li><li>
             <a href="2015/04/18/asset_compression_in_tinkerer_and_sphinx.html">asset compression in tinkerer and sphinx</a>
         </li><li>
             <a href="2014/11/19/gesture_recognition_with_arduino.html">Gesture recognition with Arduino</a>
