@@ -65,6 +65,76 @@
                 </li>
               </ul>
           </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>April 22, 2015</span>
+        </div>
+        <div class="section">
+            <h1><a href="2015/04/22/arduino_permission_denied.html">arduino permission denied</a></h1>
+<p>When using windows programs on linux there are always permission problems... and most often they are really simple to fix :)</p>
+<p>When getting a:</p>
+<div class="highlight-cpp"><div class="highlight"><pre><span class="n">Method</span> <span class="n">name</span> <span class="o">-</span> <span class="n">openPort</span><span class="p">();</span> <span class="n">Exception</span> <span class="n">type</span> <span class="o">-</span> <span class="n">Permission</span> <span class="n">denied</span><span class="p">.</span>
+</pre></div>
+</div>
+<p>error while trying to upload programs the simple fix is to add the user to the dialout group like that:</p>
+<div class="highlight-shell"><div class="highlight"><pre>sudo adduser username dialout
+</pre></div>
+</div>
+<div class="section" id="important">
+<h2>important:</h2>
+<p>After doing this you have to logout and login again to take effect of the changes!!!</p>
+</div>
+<div class="section" id="hint">
+<h2>hint:</h2>
+<p>I read about people still having problems with some ports.
+An ugly fix for that would be the editing of file-permission rights.</p>
+<div class="highlight-shell"><div class="highlight"><pre>sudo chmod a+rw theport         <span class="c">#sth. like /dev/ttyACM0</span>
+</pre></div>
+</div>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Von Lukas Strassel</span>
+        </div>
+        
+        
+        <div class="comments">
+            <a href="https://sakulstra.github.io/2015/04/22/arduino_permission_denied.html#disqus_thread" data-disqus-identifier="2015/04/22/arduino_permission_denied">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
+            <span>April 22, 2015</span>
+        </div>
+        <div class="section">
+            <h1><a href="2015/04/22/fatal_error_python_h.html">fatal error: Python.h</a></h1>
+<p>Did u ever get a not found the error for Python.h while installing packages?</p>
+<div class="highlight-cpp"><div class="highlight"><pre><span class="cp">#include "Python.h"</span>
+                    <span class="o">^</span>
+<span class="n">compilation</span> <span class="n">terminated</span><span class="p">.</span>
+</pre></div>
+</div>
+<p>in most cases the reason is a missing package.</p>
+<div class="highlight-shell"><div class="highlight"><pre>sudo apt-get install python2.7-dev libyaml-dev
+</pre></div>
+</div>
+<p>should be the solution.</p>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Von Lukas Strassel</span>
+        </div>
+        <div class="categories">
+            <span>
+                Kategorien:
+                <a href="categories/errors.html">errors</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Schlagwörter:
+                <a href="tags/python.html">python</a></span>
+        </div>
+        <div class="comments">
+            <a href="https://sakulstra.github.io/2015/04/22/fatal_error_python_h.html#disqus_thread" data-disqus-identifier="2015/04/22/fatal_error_python_h">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>April 19, 2015</span>
         </div>
         <div class="section">
@@ -323,6 +393,10 @@ bii cpp:build #builds the project
     </div></article><aside class="sidebar"><section><div class="widget">
     <h1>Aktuell</h1>
     <ul><li>
+            <a href="2015/04/22/arduino_permission_denied.html">arduino permission denied</a>
+        </li><li>
+            <a href="2015/04/22/fatal_error_python_h.html">fatal error: Python.h</a>
+        </li><li>
             <a href="2015/04/19/low_budget_humidity_sensing.html">low budget humidity sensing</a>
         </li><li>
             <a href="2015/04/18/asset_compression_in_tinkerer_and_sphinx.html">asset compression in tinkerer and sphinx</a>

@@ -15,7 +15,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="description" content="This is an awesome blog">
         <meta name="viewport" content="width=device-width">
-        <title>low budget humidity sensing &mdash; Sakulstra</title>
+        <title>arduino permission denied &mdash; Sakulstra</title>
             <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
@@ -28,7 +28,7 @@
         <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
         <script src="../../../_static/plugins.js"></script>
         <script src="../../../_static/main.js"></script>
-        <link rel="next" title="asset compression in tinkerer and sphinx" href="../18/asset_compression_in_tinkerer_and_sphinx.html" /><link rel="prev" title="fatal error: Python.h" href="../22/fatal_error_python_h.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+        <link rel="next" title="fatal error: Python.h" href="fatal_error_python_h.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
         VERSION:     '1.5',
@@ -65,22 +65,31 @@
                 </li>
               </ul>
           </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
-            <span>April 19, 2015</span>
+            <span>April 22, 2015</span>
         </div>
-    <div class="section" id="low-budget-humidity-sensing">
-<h1>low budget humidity sensing</h1>
-<p>I tend to forget watering my plants, so I decided to create a own watering reminder.
-I thought it would be fun so simply turn on a led, when the ground is too dry.
-There are quite different soil meters which differ mostly in accuracy and current consumption.
-For simplicity I&#8217;ll stick with the one proposed by <a class="reference external" href="http://www.tiagoespinha.net/2014/05/project-how-to-easily-monitor-your-plants-soil-humidity/#more-689">tiago</a> as you can get it for around 1$ at <a class="reference external" href="http://www.aliexpress.com/item/R1B1-Soil-Hygrometer-Humidity-Detection-Module-Moisture-Water-Sensor-for-Arduino/1527477144.html">aliexpress</a> (in germany you wouldn&#8217;t even get the wires for this price).</p>
-<p>Sadly I could not find any English datasheet and as my Chinese is pretty bad, but the setup i really straight forward.
-There is a VCC and GND pin which have to be connected as always. Additionally there is a A0 pin for analog output, and D0 for digital output.
-For plotting graphs and stuff we need the analog output, but as I only want to turn on a light the D0 is enough.
-D0 turns HIGH as soon as a threshold is exceeded.</p>
-<p>So what i actually did is powering the sensor via a lithium-polymer battery with 3.7V, soldering a 1k resistor between D0 and the LED&#8217;s +.
-With this setup the light turns on when the threshold is exceeded. The threshold can be configured by rotating the blue screw.</p>
-<a class="reference internal image-reference" href="../../../_images/resistor.JPG"><img alt="led resistor" src="../../../_images/resistor.JPG" style="width: 100%;" /></a>
-<a class="reference internal image-reference" href="../../../_images/setup.JPG"><img alt="full setup" src="../../../_images/setup.JPG" style="width: 100%;" /></a>
+    <div class="section" id="arduino-permission-denied">
+<h1>arduino permission denied</h1>
+<p>When using windows programs on linux there are always permission problems... and most often they are really simple to fix :)</p>
+<p>When getting a:</p>
+<div class="highlight-cpp"><div class="highlight"><pre><span class="n">Method</span> <span class="n">name</span> <span class="o">-</span> <span class="n">openPort</span><span class="p">();</span> <span class="n">Exception</span> <span class="n">type</span> <span class="o">-</span> <span class="n">Permission</span> <span class="n">denied</span><span class="p">.</span>
+</pre></div>
+</div>
+<p>error while trying to upload programs the simple fix is to add the user to the dialout group like that:</p>
+<div class="highlight-shell"><div class="highlight"><pre>sudo adduser username dialout
+</pre></div>
+</div>
+<div class="section" id="important">
+<h2>important:</h2>
+<p>After doing this you have to logout and login again to take effect of the changes!!!</p>
+</div>
+<div class="section" id="hint">
+<h2>hint:</h2>
+<p>I read about people still having problems with some ports.
+An ugly fix for that would be the editing of file-permission rights.</p>
+<div class="highlight-shell"><div class="highlight"><pre>sudo chmod a+rw theport         <span class="c">#sth. like /dev/ttyACM0</span>
+</pre></div>
+</div>
+</div>
 </div>
 
     <div class="postmeta">
@@ -90,16 +99,16 @@ With this setup the light turns on when the threshold is exceeded. The threshold
         
         
         </div><ul class="related clearfix">
-            <li class="left"> &laquo; <a href="../22/fatal_error_python_h.html">fatal error: Python.h</a></li>
-            <li class="right"><a href="../18/asset_compression_in_tinkerer_and_sphinx.html">asset compression in tinkerer and sphinx</a> &raquo; </li>
-        </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "sakulstra";    var disqus_identifier = "2015/04/19/low_budget_humidity_sensing";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
+            <li class="left"></li>
+            <li class="right"><a href="fatal_error_python_h.html">fatal error: Python.h</a> &raquo; </li>
+        </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "sakulstra";    var disqus_identifier = "2015/04/22/arduino_permission_denied";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
     <h1>Aktuell</h1>
     <ul><li>
-            <a href="../22/arduino_permission_denied.html">arduino permission denied</a>
+            <a href="#">arduino permission denied</a>
         </li><li>
-            <a href="../22/fatal_error_python_h.html">fatal error: Python.h</a>
+            <a href="fatal_error_python_h.html">fatal error: Python.h</a>
         </li><li>
-            <a href="#">low budget humidity sensing</a>
+            <a href="../19/low_budget_humidity_sensing.html">low budget humidity sensing</a>
         </li><li>
             <a href="../18/asset_compression_in_tinkerer_and_sphinx.html">asset compression in tinkerer and sphinx</a>
         </li><li>
