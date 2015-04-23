@@ -65,6 +65,52 @@
                 </li>
               </ul>
           </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>April 23, 2015</span>
+        </div>
+        <div class="section">
+            <h1><a href="2015/04/23/android_studio_on_ubuntu_14_10_15_04.html">android studio on ubuntu 14.10, 15.04</a></h1>
+<p>Since the newer ubuntu versions u can simply install android studio via ubuntu-developer-tools-center.</p>
+<div class="highlight-shell"><div class="highlight"><pre>sudo apt-get install ubuntu-developer-tools-center
+udtc android
+</pre></div>
+</div>
+<p>Can u? I got an error caused by a bug in the python script as reported on <a class="reference external" href="https://bugs.launchpad.net/ubuntu/+source/ubuntu-developer-tools-center/+bug/1400536">launchpad</a>.</p>
+<p>The fix is listed in one of the comments below but i’ll post it here, so u don’t have to dig for it.
+Open the python file with admin rights:</p>
+<div class="highlight-shell"><div class="highlight"><pre>sudo nano /usr/lib/python3/dist-packages/udtc/frameworks/android.py
+</pre></div>
+</div>
+<p>and change the following lines(57,58,87)</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#replace 1st with 2nd</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">r'href="(.*)"&gt;'</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">r'href="(.*)"'</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+
+<span class="n">p</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">r'&lt;td&gt;(\w+)&lt;/td&gt;'</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">r'&lt;td&gt;([0-9a-f]+)&lt;/td&gt;'</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+
+<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">parse_download_link</span><span class="p">(</span><span class="s">'id="linux-studio"'</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">in_download</span><span class="p">)</span>
+<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">parse_download_link</span><span class="p">(</span><span class="s">'id="linux-bundle"'</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">in_download</span><span class="p">)</span>
+</pre></div>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Von Lukas Strassel</span>
+        </div>
+        <div class="categories">
+            <span>
+                Kategorien:
+                <a href="categories/errors.html">errors</a>, <a href="categories/android.html">android</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Schlagwörter:
+                <a href="tags/android.html">android</a></span>
+        </div>
+        <div class="comments">
+            <a href="https://sakulstra.github.io/2015/04/23/android_studio_on_ubuntu_14_10_15_04.html#disqus_thread" data-disqus-identifier="2015/04/23/android_studio_on_ubuntu_14_10_15_04">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>April 22, 2015</span>
         </div>
         <div class="section">
@@ -393,6 +439,8 @@ bii cpp:build #builds the project
     </div></article><aside class="sidebar"><section><div class="widget">
     <h1>Aktuell</h1>
     <ul><li>
+            <a href="2015/04/23/android_studio_on_ubuntu_14_10_15_04.html">android studio on ubuntu 14.10, 15.04</a>
+        </li><li>
             <a href="2015/04/22/arduino_permission_denied.html">arduino permission denied</a>
         </li><li>
             <a href="2015/04/22/fatal_error_python_h.html">fatal error: Python.h</a>
