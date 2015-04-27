@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2015/04/27/arduino_bluetooth_logging
    2015/04/23/android_studio_on_ubuntu_14_10_15_04
    2015/04/22/arduino_permission_denied
    2015/04/22/fatal_error_python_h

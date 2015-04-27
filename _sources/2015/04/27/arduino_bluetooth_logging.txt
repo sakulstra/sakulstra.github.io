@@ -1,0 +1,30 @@
+arduino bluetooth logging
+=========================
+In recent days I worked on a android graph tool called `BlueGraph`_ which allows to monitor real time data of sensors.
+Therefore I used a ZS-040 sending data from an msp430 with a baud rate of 9600.
+The mobile phone receives this data and displays a nice graph containing the data ;)
+
+The app expects the data to be in the following format:
+
+.. code-block:: shell
+	
+	(+|-)(d*)(delimiter)(+|-)(d*),...(\n)
+
+Features
+^^^^^^^^
+- plotting up to x graphs simultaneously
+- change the window Size
+- auto scale/static scale for y-axis
+- configure the delimiter between the data entries 
+
+Till now the feature list is pretty sparse - if u have some ideas please let me know in the comments.
+
+Regards,
+Lukas
+
+.. _BlueGraph: https://play.google.com/store/apps/details?id=sakulstra.androidbluetooth
+
+.. author:: default
+.. categories:: arduino, bluetooth
+.. tags:: arduino, bluetooth, arduino graph
+.. comments::
