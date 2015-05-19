@@ -8,7 +8,7 @@ The app expects the data to be in the following format:
 
 .. code-block:: shell
 	
-	(+|-)(d*)(delimiter)(+|-)(d*),...(\n)
+	(+|-)(d*)(delimiter)(+|-)(d*)...(\n)
 
 Features
 ^^^^^^^^

@@ -5,8 +5,29 @@
         <link>https://sakulstra.github.io/</link>
         <description>cutting the edge</description>
         <language>en-us</language>
-        <pubDate>Mon, 27 Apr 2015 00:00:00 +0200</pubDate>
+        <pubDate>Tue, 19 May 2015 00:00:00 +0200</pubDate>
         
+        <item>
+            <link>https://sakulstra.github.io/2015/05/19/pi_ssh_slow.html</link>
+            <guid>https://sakulstra.github.io/2015/05/19/pi_ssh_slow.html</guid>
+            <title><![CDATA[pi ssh slow]]></title>
+            <description><![CDATA[<h1>pi ssh slow</h1>
+<p>In recent days I connected a rs485 chip to the raspberry pi and programmed it via biicode and ssh(tutorial will follow).
+The great advantage with biicode is, that u don’t have to set up cross-compiling and stuff like than on your self because biicode manages this with some simple <a class="reference external" href="http://docs.biicode.com/raspberrypi/rpi-gettingstarted.html">commands</a>.
+Another important advantage is, that u can easily use the wiringpi library with a simple #include.</p>
+<p>The problem was, that I had huge delay problems with rpi:send and spi:ssh (also with the usual ssh).
+The ssh connection was freakin slow and it needed seconds till the “enter password” prompt showed up.</p>
+<p>A simple solution for this problem is, to edit the /etc/ssh/sshd_config on the raspberry-pi. Add the line:</p>
+<div class="highlight-shell"><div class="highlight"><pre>UseDNS no
+</pre></div>
+</div>
+<p>and everything should work as expected.</p>
+<p>Regards,</p>
+<p>Lukas</p>
+]]></description>
+             <pubDate>Tue, 19 May 2015 00:00:00 +0200</pubDate>
+        </item>
+    
         <item>
             <link>https://sakulstra.github.io/2015/04/27/arduino_bluetooth_logging.html</link>
             <guid>https://sakulstra.github.io/2015/04/27/arduino_bluetooth_logging.html</guid>
@@ -16,7 +37,7 @@
 Therefore I used a ZS-040 sending data from an msp430 with a baud rate of 9600.
 The mobile phone receives this data and displays a nice graph containing the data ;)</p>
 <p>The app expects the data to be in the following format:</p>
-<div class="highlight-shell"><div class="highlight"><pre><span class="o">(</span>+<span class="p">|</span>-<span class="o">)(</span>d*<span class="o">)(</span>delimiter<span class="o">)(</span>+<span class="p">|</span>-<span class="o">)(</span>d*<span class="o">)</span>,...<span class="o">(</span><span class="se">\n</span><span class="o">)</span>
+<div class="highlight-shell"><div class="highlight"><pre><span class="o">(</span>+<span class="p">|</span>-<span class="o">)(</span>d*<span class="o">)(</span>delimiter<span class="o">)(</span>+<span class="p">|</span>-<span class="o">)(</span>d*<span class="o">)</span>...<span class="o">(</span><span class="se">\n</span><span class="o">)</span>
 </pre></div>
 </div>
 <div class="section" id="features">

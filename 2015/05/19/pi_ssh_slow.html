@@ -15,7 +15,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="description" content="This is an awesome blog">
         <meta name="viewport" content="width=device-width">
-        <title>Hello World! &mdash; Sakulstra</title>
+        <title>pi ssh slow &mdash; Sakulstra</title>
             <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
@@ -28,7 +28,7 @@
         <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
         <script src="../../../_static/plugins.js"></script>
         <script src="../../../_static/main.js"></script>
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+        <link rel="next" title="arduino bluetooth logging" href="../../04/27/arduino_bluetooth_logging.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
         VERSION:     '1.5',
@@ -65,10 +65,22 @@
                 </li>
               </ul>
           </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
-            <span>November 12, 2014</span>
+            <span>May 19, 2015</span>
         </div>
-    <div class="section" id="hello-world">
-<h1>Hello World!</h1>
+    <div class="section" id="pi-ssh-slow">
+<h1>pi ssh slow</h1>
+<p>In recent days I connected a rs485 chip to the raspberry pi and programmed it via biicode and ssh(tutorial will follow).
+The great advantage with biicode is, that u don&#8217;t have to set up cross-compiling and stuff like than on your self because biicode manages this with some simple <a class="reference external" href="http://docs.biicode.com/raspberrypi/rpi-gettingstarted.html">commands</a>.
+Another important advantage is, that u can easily use the wiringpi library with a simple #include.</p>
+<p>The problem was, that I had huge delay problems with rpi:send and spi:ssh (also with the usual ssh).
+The ssh connection was freakin slow and it needed seconds till the &#8220;enter password&#8221; prompt showed up.</p>
+<p>A simple solution for this problem is, to edit the /etc/ssh/sshd_config on the raspberry-pi. Add the line:</p>
+<div class="highlight-shell"><div class="highlight"><pre>UseDNS no
+</pre></div>
+</div>
+<p>and everything should work as expected.</p>
+<p>Regards,</p>
+<p>Lukas</p>
 </div>
 
     <div class="postmeta">
@@ -76,27 +88,34 @@
             <span>Von Lukas Strassel</span>
         </div>
         
-        
-        </div><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "sakulstra";    var disqus_identifier = "2014/11/12/hello_world";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
+        <div class="tags">
+            <span>
+                Schlagwörter:
+                <a href="../../../tags/raspberry_pi.html">raspberry pi</a>, <a href="../../../tags/ssh.html">ssh</a></span>
+        </div>
+        </div><ul class="related clearfix">
+            <li class="left"></li>
+            <li class="right"><a href="../../04/27/arduino_bluetooth_logging.html">arduino bluetooth logging</a> &raquo; </li>
+        </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "sakulstra";    var disqus_identifier = "2015/05/19/pi_ssh_slow";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
     <h1>Aktuell</h1>
     <ul><li>
-            <a href="../../../2015/05/19/pi_ssh_slow.html">pi ssh slow</a>
+            <a href="#">pi ssh slow</a>
         </li><li>
-            <a href="../../../2015/04/27/arduino_bluetooth_logging.html">arduino bluetooth logging</a>
+            <a href="../../04/27/arduino_bluetooth_logging.html">arduino bluetooth logging</a>
         </li><li>
-            <a href="../../../2015/04/23/android_studio_on_ubuntu_14_10_15_04.html">android studio on ubuntu 14.10, 15.04</a>
+            <a href="../../04/23/android_studio_on_ubuntu_14_10_15_04.html">android studio on ubuntu 14.10, 15.04</a>
         </li><li>
-            <a href="../../../2015/04/22/arduino_permission_denied.html">arduino permission denied</a>
+            <a href="../../04/22/arduino_permission_denied.html">arduino permission denied</a>
         </li><li>
-            <a href="../../../2015/04/22/fatal_error_python_h.html">fatal error: Python.h</a>
+            <a href="../../04/22/fatal_error_python_h.html">fatal error: Python.h</a>
         </li><li>
-            <a href="../../../2015/04/19/low_budget_humidity_sensing.html">low budget humidity sensing</a>
+            <a href="../../04/19/low_budget_humidity_sensing.html">low budget humidity sensing</a>
         </li><li>
-            <a href="../../../2015/04/18/asset_compression_in_tinkerer_and_sphinx.html">asset compression in tinkerer and sphinx</a>
+            <a href="../../04/18/asset_compression_in_tinkerer_and_sphinx.html">asset compression in tinkerer and sphinx</a>
         </li><li>
-            <a href="../19/gesture_recognition_with_arduino.html">Gesture recognition with Arduino</a>
+            <a href="../../../2014/11/19/gesture_recognition_with_arduino.html">Gesture recognition with Arduino</a>
         </li><li>
-            <a href="../17/going_crazy_with_biicode_and_arduino.html">Going crazy with biicode and arduino</a>
+            <a href="../../../2014/11/17/going_crazy_with_biicode_and_arduino.html">Going crazy with biicode and arduino</a>
         </li></ul>
 </div>
 </section><section><div class="widget" id="searchbox" role="search">
