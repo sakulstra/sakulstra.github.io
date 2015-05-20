@@ -1,0 +1,40 @@
+code composer studio mint 17.1, 17.2 64bit
+==========================================
+
+Code composer studio can be downloaded directly from ti.
+When u extract the zipped file u will get a readme and a *.bin file which u have to make executable.
+
+.. code-block:: shell
+
+    sudo chmod +x ./*.bin #with a terminal session in the extracted folder
+    
+Once the file is executable u can run:
+
+.. code-block:: shell
+    
+    ./filename.bin
+    
+, or double click one the binary. 
+
+Usually the installer should complain about missing libraries. To obtain these u can simply type
+
+.. code-block:: shell
+
+    sudo apt-get install libgnomevfs2-0:i386 liborbit-2.0:i386 libusb-0.1:i386
+    
+So after installing the drivers and code composer studio itself the linux drivers are still  missing.
+The driver installation has to be performed via terminal so u have to navigate to the ti folder u specified in the installation and execute the driver installation as root.
+
+.. code-block:: shell
+
+    cd /home/username/ti/ccsv6/install_scripts
+    sudo ./install_drivers.sh
+    
+Regards,
+
+Lukas
+
+.. author:: default
+.. categories:: msp430
+.. tags:: msp430, code composer studio, linux mint
+.. comments::

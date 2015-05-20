@@ -15,7 +15,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="description" content="This is an awesome blog">
         <meta name="viewport" content="width=device-width">
-        <title>Hello World! &mdash; Sakulstra</title>
+        <title>code composer studio mint 17.1, 17.2 64bit &mdash; Sakulstra</title>
             <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
@@ -28,7 +28,7 @@
         <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
         <script src="../../../_static/plugins.js"></script>
         <script src="../../../_static/main.js"></script>
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+        <link rel="next" title="pi ssh slow" href="../19/pi_ssh_slow.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
         VERSION:     '1.5',
@@ -65,40 +65,73 @@
                 </li>
               </ul>
           </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
-            <span>November 12, 2014</span>
+            <span>May 20, 2015</span>
         </div>
-    <div class="section" id="hello-world">
-<h1>Hello World!</h1>
+    <div class="section" id="code-composer-studio-mint-17-1-17-2-64bit">
+<h1>code composer studio mint 17.1, 17.2 64bit</h1>
+<p>Code composer studio can be downloaded directly from ti.
+When u extract the zipped file u will get a readme and a <a href="#id1"><span class="problematic" id="id2">*</span></a>.bin file which u have to make executable.</p>
+<div class="highlight-shell"><div class="highlight"><pre>sudo chmod +x ./*.bin <span class="c">#with a terminal session in the extracted folder</span>
+</pre></div>
+</div>
+<p>Once the file is executable u can run:</p>
+<div class="highlight-shell"><div class="highlight"><pre>./filename.bin
+</pre></div>
+</div>
+<p>, or double click one the binary.</p>
+<p>Usually the installer should complain about missing libraries. To obtain these u can simply type</p>
+<div class="highlight-shell"><div class="highlight"><pre>sudo apt-get install libgnomevfs2-0:i386 liborbit-2.0:i386 libusb-0.1:i386
+</pre></div>
+</div>
+<p>So after installing the drivers and code composer studio itself the linux drivers are still  missing.
+The driver installation has to be performed via terminal so u have to navigate to the ti folder u specified in the installation and execute the driver installation as root.</p>
+<div class="highlight-shell"><div class="highlight"><pre><span class="nb">cd</span> /home/username/ti/ccsv6/install_scripts
+sudo ./install_drivers.sh
+</pre></div>
+</div>
+<p>Regards,</p>
+<p>Lukas</p>
 </div>
 
     <div class="postmeta">
         <div class="author">
             <span>Von Lukas Strassel</span>
         </div>
-        
-        
-        </div><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "sakulstra";    var disqus_identifier = "2014/11/12/hello_world";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
+        <div class="categories">
+            <span>
+                Kategorien:
+                <a href="../../../categories/msp430.html">msp430</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Schlagwörter:
+                <a href="../../../tags/msp430.html">msp430</a>, <a href="../../../tags/code_composer_studio.html">code composer studio</a>, <a href="../../../tags/linux_mint.html">linux mint</a></span>
+        </div>
+        </div><ul class="related clearfix">
+            <li class="left"></li>
+            <li class="right"><a href="../19/pi_ssh_slow.html">pi ssh slow</a> &raquo; </li>
+        </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "sakulstra";    var disqus_identifier = "2015/05/20/code_composer_studio_mint_17_1_17_2_64bit";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
     <h1>Aktuell</h1>
     <ul><li>
-            <a href="../../../2015/05/20/code_composer_studio_mint_17_1_17_2_64bit.html">code composer studio mint 17.1, 17.2 64bit</a>
+            <a href="#">code composer studio mint 17.1, 17.2 64bit</a>
         </li><li>
-            <a href="../../../2015/05/19/pi_ssh_slow.html">pi ssh slow</a>
+            <a href="../19/pi_ssh_slow.html">pi ssh slow</a>
         </li><li>
-            <a href="../../../2015/04/27/arduino_bluetooth_logging.html">arduino bluetooth logging</a>
+            <a href="../../04/27/arduino_bluetooth_logging.html">arduino bluetooth logging</a>
         </li><li>
-            <a href="../../../2015/04/23/android_studio_on_ubuntu_14_10_15_04.html">android studio on ubuntu 14.10, 15.04</a>
+            <a href="../../04/23/android_studio_on_ubuntu_14_10_15_04.html">android studio on ubuntu 14.10, 15.04</a>
         </li><li>
-            <a href="../../../2015/04/22/arduino_permission_denied.html">arduino permission denied</a>
+            <a href="../../04/22/arduino_permission_denied.html">arduino permission denied</a>
         </li><li>
-            <a href="../../../2015/04/22/fatal_error_python_h.html">fatal error: Python.h</a>
+            <a href="../../04/22/fatal_error_python_h.html">fatal error: Python.h</a>
         </li><li>
-            <a href="../../../2015/04/19/low_budget_humidity_sensing.html">low budget humidity sensing</a>
+            <a href="../../04/19/low_budget_humidity_sensing.html">low budget humidity sensing</a>
         </li><li>
-            <a href="../../../2015/04/18/asset_compression_in_tinkerer_and_sphinx.html">asset compression in tinkerer and sphinx</a>
+            <a href="../../04/18/asset_compression_in_tinkerer_and_sphinx.html">asset compression in tinkerer and sphinx</a>
         </li><li>
-            <a href="../19/gesture_recognition_with_arduino.html">Gesture recognition with Arduino</a>
+            <a href="../../../2014/11/19/gesture_recognition_with_arduino.html">Gesture recognition with Arduino</a>
         </li><li>
-            <a href="../17/going_crazy_with_biicode_and_arduino.html">Going crazy with biicode and arduino</a>
+            <a href="../../../2014/11/17/going_crazy_with_biicode_and_arduino.html">Going crazy with biicode and arduino</a>
         </li></ul>
 </div>
 </section><section><div class="widget" id="searchbox" role="search">
