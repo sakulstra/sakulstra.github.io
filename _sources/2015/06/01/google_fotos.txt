@@ -1,0 +1,13 @@
+google fotos face search
+========================
+
+Googles new fotos app seems to be pretty awesome, but if you are looking for the "find by person/face" tab like shown in the preview u'll recognice that there is no person field in your listing.
+
+This is most likely caused by country legislations:
+Face search is only allowed in a few countrys - in germany for example you wount be able to search for persons.
+
+
+.. author:: default
+.. categories:: none
+.. tags:: none
+.. comments::
