@@ -10,11 +10,6 @@ export const HOME: Metadata = {
   DESCRIPTION: "Welcome on my blog.",
 };
 
-export const BLOG: Metadata = {
-  TITLE: "Blog",
-  DESCRIPTION: "A collection of articles on topics I am passionate about.",
-};
-
 export const SOCIALS: Socials = [
   {
     NAME: "Twitter",
