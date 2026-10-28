@@ -1,0 +1,20 @@
+---
+// Renders a markdown heading with a hover "#" link to itself.
+interface Props {
+  as: "h2" | "h3" | "h4";
+  id?: string;
+}
+
+const { as: Tag, id, ...rest } = Astro.props;
+---
+
+<Tag id={id} {...rest}>
+  <slot />
+  {
+    id && (
+      <a href={`#${id}`} class="heading-anchor" aria-label="Link to this section">
+        #
+      </a>
+    )
+  }
+</Tag>

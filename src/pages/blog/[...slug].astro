@@ -7,6 +7,9 @@ import { readingTime } from "@lib/utils";
 import BackToPrevious from "@components/BackToPrevious.astro";
 import PostNavigation from "@components/PostNavigation.astro";
 import TableOfContents from "@components/TableOfContents.astro";
+import H2 from "@components/headings/H2.astro";
+import H3 from "@components/headings/H3.astro";
+import H4 from "@components/headings/H4.astro";
 
 export async function getStaticPaths() {
   const posts = (await getCollection("blog"))
@@ -71,7 +74,7 @@ const { Content, headings } = await render(post);
     </div>
     {headings.length > 0 && <TableOfContents headings={headings} />}
     <article class="animate">
-      <Content />
+      <Content components={{ h2: H2, h3: H3, h4: H4 }} />
       <div class="mt-24">
         <PostNavigation prevPost={prevPost} nextPost={nextPost} />
       </div>
