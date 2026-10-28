@@ -1,6 +1,25 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* v4 defaults border color to currentColor; keep v3 behavior */
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
 
 html {
   overflow-y: auto;
@@ -27,7 +46,7 @@ body {
 header {
   @apply fixed left-0 right-0 top-0 z-50 py-6;
   @apply bg-neutral-100/75 dark:bg-neutral-900/75;
-  @apply saturate-200 backdrop-blur-sm;
+  @apply saturate-200 backdrop-blur-xs;
 }
 
 main {
@@ -41,19 +60,17 @@ footer {
 article {
   @apply prose prose-neutral max-w-full dark:prose-invert prose-img:mx-auto prose-img:my-auto;
   @apply prose-headings:font-semibold;
-  @apply prose-headings:text-black prose-headings:dark:text-white;
+  @apply prose-headings:text-black dark:prose-headings:text-white;
 }
 
-@layer utilities {
-  article a {
-    @apply font-sans text-current underline underline-offset-[3px];
-    @apply decoration-black/30 dark:decoration-white/30;
-    @apply transition-colors duration-300 ease-in-out;
-  }
-  article a:hover {
-    @apply text-black dark:text-white;
-    @apply decoration-black/50 dark:decoration-white/50;
-  }
+article a {
+  @apply font-sans text-current underline underline-offset-[3px];
+  @apply decoration-black/30 dark:decoration-white/30;
+  @apply transition-colors duration-300 ease-in-out;
+}
+article a:hover {
+  @apply text-black dark:text-white;
+  @apply decoration-black/50 dark:decoration-white/50;
 }
 
 .animate {
@@ -108,7 +125,7 @@ pre {
 
 /* copy code button on codeblocks */
 .copy-code {
-  @apply absolute right-3 top-3 grid size-9 place-content-center rounded border border-black/15 bg-neutral-100 text-center duration-300 ease-in-out dark:border-white/20 dark:bg-neutral-900;
+  @apply absolute right-3 top-3 grid size-9 place-content-center rounded-sm border border-black/15 bg-neutral-100 text-center duration-300 ease-in-out dark:border-white/20 dark:bg-neutral-900;
 }
 
 .copy-code:hover {

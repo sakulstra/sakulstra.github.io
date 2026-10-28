@@ -1,0 +1,177 @@
+---
+title: "Exploring eth_getLogsV2"
+description: "Field selection and deduplication for Ethereum log queries, measured on 5,000 real mainnet blocks."
+date: "2026-10-28"
+---
+
+Anyone who has built an indexer on top of `eth_getLogs` knows the pain: no reorg handling, no pagination, provider-specific range limits, and a lot of bytes on the wire. [execution-apis#900](https://github.com/ethereum/execution-apis/pull/900) proposes an `eth_getLogsV2` to fix some of that. While prototyping it in [reth](https://github.com/paradigmxyz/reth), i noticed some things suboptimal on the proposed spec and benchmarked a bit the prototype / checked if it even makes sense in prod.
+
+## Changes to the spec
+
+The proposal pages through the chain block by block: the client passes `fromBlockHash`, and the response returns a `cursorBlock`, the last block it scanned, to continue from. The prototype changes this in seven ways:
+
+1. **A cursor that can stop inside a block.** The cursor is `after: { blockNumber, blockHash, logIndex? }` and is exclusive. With `logIndex` the next page resumes after that log, without it after the whole block. With a block-level cursor, a block holding more matching logs than the server returns per response can never be fetched. `fromBlock` starts the first page, `after` continues it.
+2. **Limits end the page, not the request.** Today, hitting a provider's range or result limit is an error, and the client has to guess a smaller range. In v2, `maxLogs`, `maxBlocks` and the server's own limits only make the page shorter, and the response always carries a `nextCursor`. Polling at the head works the same way: until a new block arrives, the server returns no logs and the same cursor.
+3. **The server checks for reorgs.** If the cursor's block is no longer canonical, the request fails with `-32001` and includes the canonical block at that height, so the client knows where the chains diverge. If the chain reorgs while the server is scanning, the request fails with `-32000` and the client retries. The response includes `finalizedBlock` next to `headBlock`, so the client knows how far back a reorg can reach.
+4. **`direction` instead of `limitLatest`/`limitOldest`.** `asc` (the default) or `desc`, combined with `maxLogs`. "The last 20 transfers of this token" is `{ fromBlock: "latest", direction: "desc", maxLogs: 20 }`, and it pages like any other query.
+5. **Field selection.** The client says which log fields it wants. The log's position (`blockNumber`, `logIndex`) always comes back, everything else is optional. Most indexers decode `topics` and `data` and never look at `transactionHash`. [Envio](https://envio.dev/) has had this feature forever, and Monad proposed it too in [MIP-16](https://github.com/monad-crypto/MIPs/pull/89).
+6. **Block fields once per block.** A response with 100,000 logs used to repeat `blockHash` and `blockTimestamp` on every one of them. Now a `blocks` list next to the logs states them once per block, and each log keeps only its `blockNumber`. The server already guarantees that a page comes from a single chain, so the number is enough to find a log's block in the list. The logs stay flat, so client code that reads a log still works with one extra lookup.
+7. **No `referenceHead` and `proof`.** They're placeholders for EIP-8304 and can be added once that EIP defines them.
+
+A request for the next page then looks like this:
+
+```json
+{
+  "after": {
+    "blockNumber": "0x1910b38",
+    "blockHash": "0x9c41…",
+    "logIndex": "0x8a"
+  },
+  "address": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+  "topics": [
+    "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+  ],
+  "maxLogs": "0x2710",
+  "fields": ["topics", "data"]
+}
+```
+
+```json
+{
+  "logs": [
+    { "blockNumber": "0x1910b38", "logIndex": "0x8c", "topics": […], "data": "0x…" },
+    …
+  ],
+  "blocks": [
+    { "number": "0x1910b38", "hash": "0x9c41…" },
+    …
+  ],
+  "nextCursor": { "blockNumber": "0x1910b52", "blockHash": "0x31d7…", "logIndex": "0x14" },
+  "headBlock": { "number": "0x1910f20", "hash": "0x…", "parentHash": "0x…" },
+  "finalizedBlock": { "number": "0x1910f00", "hash": "0x…", "parentHash": "0x…" }
+}
+```
+
+Field selection and the `blocks` list are the two changes that affect how much work the server does and how many bytes it sends, so that's what the measurements below focus on.
+
+## Setup
+
+- **Data:** 5,000 real mainnet blocks (26,275,001 to 26,280,000, late October 2026), fetched from a public RPC and written into reth's on-disk database (MDBX plus static files).
+- **Code:** a prototype `eth_getLogsV2` in reth that builds only the requested fields, next to the existing `eth_getLogs`.
+- **What's timed:** the RPC handler plus `serde_json` serialization of the response. No HTTP layer, warm OS page cache, Apple M2 Pro.
+- **Runs:** every case ran 5 times in separate processes, 10 samples each, with the order of the variants reversed every other run. Times are the mean across runs. Run-to-run variation was under 5% everywhere except two cases, which are called out where they appear.
+- **Queries:**
+  - **USDC transfers**, 1,000 blocks: one busy contract and one event, about 98,000 logs.
+  - **All logs**, 100 blocks: an indexer doing a full scan, about 99,000 logs.
+  - **ENS registry**, 4,000 blocks: a quiet contract, 392 logs.
+  - **All logs at the tip**, the newest 100 blocks: about 56,000 logs, served through reth's recent-block cache path.
+
+## Field selection
+
+Five variants of the same query:
+
+- **getLogs:** today's `eth_getLogs`.
+- **v2 all fields:** `eth_getLogsV2` returning everything. It drops `removed`, which is always `false` for this call, and states block hash and timestamp once per block in the `blocks` list.
+- **v2 without tx hash:** everything except `transactionHash`.
+- **v2 topics + data:** what a single-contract indexer needs to decode events.
+- **v2 required only:** no optional fields selected. Each log keeps just `blockNumber` and `logIndex`, and each block its hash, which v2 always returns because pagination needs them. That says where a log is, not what it contains, so no real client would ask for this. It's here as a baseline: the smallest and fastest a response can get, which shows how much of the cost is the log contents.
+
+### Size
+
+Response size in MB, raw / gzipped:
+
+| Query                | getLogs       | v2 all fields | v2 without tx hash | v2 topics + data | v2 required only |
+| -------------------- | ------------- | ------------- | ------------------ | ---------------- | ---------------- |
+| USDC, 1,000 blocks   | 62.2 / 7.25   | 49.9 / 7.09   | 41.4 / 4.80        | 33.4 / 4.51      | 4.66 / 0.31      |
+| All logs, 100 blocks | 67.1 / 7.01   | 54.6 / 6.78   | 45.9 / 6.01        | 37.9 / 5.63      | 4.64 / 0.26      |
+| ENS, 4,000 blocks    | 0.235 / 0.035 | 0.206 / 0.036 | 0.172 / 0.029      | 0.136 / 0.027    | 0.035 / 0.010    |
+| All logs at the tip  | 38.6 / 4.03   | 31.6 / 3.89   | 26.7 / 3.27        | 22.2 / 2.96      | 2.61 / 0.14      |
+
+Dropping `transactionHash` removes 15–17% of the raw JSON but **up to a third of the gzipped bytes** (7.09 MB down to 4.80 MB for USDC). Hashes are random, so gzip can barely touch them: each one still costs about 24 of its 32 bytes after compression. The block fields, by contrast, nearly vanish under gzip. The "required only" baseline is 91% smaller than "v2 all fields" raw and 96% smaller gzipped: the block number repeats for every log in a block and the log index counts up, so gzip squeezes them almost to nothing.
+
+### Speed
+
+Handler plus serialization, in milliseconds, mean of 5 runs:
+
+| Query                | getLogs | v2 all fields | v2 without tx hash | v2 topics + data | v2 required only |
+| -------------------- | ------- | ------------- | ------------------ | ---------------- | ---------------- |
+| USDC, 1,000 blocks   | 276     | 265           | 117                | 107              | 90               |
+| All logs, 100 blocks | 120     | 106           | 56                 | 49               | 26               |
+| ENS, 4,000 blocks    | 377     | 378           | 376                | 376              | 378              |
+| All logs at the tip  | 66      | 58            | 23                 | 19               | 7                |
+
+With all fields selected, v2 is 4–12% faster than `eth_getLogs`, because it doesn't repeat block hash and timestamp on every log (more on that under Deduplication). One of the five USDC "required only" runs was slow (106 ms against 84–89 ms for the others), so that cell varies by 10%.
+
+Dropping `transactionHash` alone **halves the server time** for the two big historical queries. Every other log field comes from the receipt or the block header, which the node reads anyway. The transaction hash doesn't: for each receipt with a matching log, the node reads the full transaction from storage and hashes it, only to return 32 bytes most indexers throw away.
+
+Two caveats:
+
+- **The ENS query doesn't move at all.** With 392 logs in 4,000 blocks, the time goes into scanning headers and their bloom filters, not into building logs. Field selection only pays off when there are many logs.
+- **The tip numbers are a worst case.** reth keeps receipts of recent blocks in memory, but the transaction bodies only if something else loaded them. On a live node that usually happened already, so the hash is cheaper there than in this benchmark.
+
+## Deduplication
+
+How far should deduplication go? Here I took the logs from "v2 all fields" and serialized them in three shapes that carry exactly the same information:
+
+```jsonc
+// flat: every log repeats its block fields, like eth_getLogs
+[{ "blockNumber": "0x…", "blockHash": "0x…", "blockTimestamp": "0x…", "logIndex": "0x…", "address": "0x…", … }, …]
+
+// blocks list, what the v2 prototype returns: flat logs, block fields once in a list next to them
+{ "logs": [{ "blockNumber": "0x…", "logIndex": "0x…", "address": "0x…", … }, …],
+  "blocks": [{ "number": "0x…", "hash": "0x…", "timestamp": "0x…" }, …] }
+
+// grouped by block: logs nested inside their block
+[{ "blockNumber": "0x…", "blockHash": "0x…", "blockTimestamp": "0x…", "logs": [{ "logIndex": "0x…", "address": "0x…", … }, …] }, …]
+```
+
+### Bandwidth
+
+Size in MB, raw / gzipped, with the change relative to flat:
+
+| Query                | flat          | blocks list                  | by block                     |
+| -------------------- | ------------- | ---------------------------- | ---------------------------- |
+| USDC, 1,000 blocks   | 60.6 / 7.25   | 49.9 (−18%) / 7.09 (−2.3%)   | 47.4 (−22%) / 7.10 (−2.1%)   |
+| All logs, 100 blocks | 65.5 / 6.97   | 54.6 (−17%) / 6.78 (−2.8%)   | 52.0 (−21%) / 6.77 (−2.8%)   |
+| ENS, 4,000 blocks    | 0.228 / 0.035 | 0.205 (−10%) / 0.036 (+1.0%) | 0.199 (−13%) / 0.036 (+1.0%) |
+| All logs at the tip  | 37.7 / 4.00   | 31.6 (−16%) / 3.89 (−2.8%)   | 30.1 (−20%) / 3.88 (−3.0%)   |
+
+Raw JSON shrinks by a sixth to a fifth on the big queries. **Gzipped, it's 2–3%**, and for the small ENS response it even grows slightly. The repeated block hash is the same string over and over, which is exactly what gzip is built for. So deduplication saves almost no bandwidth in practice. The blocks list gets nearly all of the raw saving of full grouping, because the block hash is most of what's repeated; it only keeps the block number on each log.
+
+### Serialization
+
+Time for `serde_json::to_vec`, in milliseconds (ENS in microseconds), mean of 5 runs:
+
+| Query                  | getLogs flat | v2 flat | blocks list | by block    |
+| ---------------------- | ------------ | ------- | ----------- | ----------- |
+| USDC, 1,000 blocks     | 43.8         | 42.9    | 33.2 (−23%) | 29.1 (−32%) |
+| All logs, 100 blocks   | 46.9         | 46.6    | 36.1 (−23%) | 31.3 (−33%) |
+| ENS, 4,000 blocks (µs) | 147          | 144     | 133 (−8%)   | 121 (−16%)  |
+| All logs at the tip    | 25.5         | 25.3    | 20.8 (−18%) | 18.6 (−26%) |
+
+One of the five "all logs, v2 flat" runs took 78 ms against 45–48 ms for the others, so that mean leaves it out.
+
+Serializing is CPU work, and every hex string costs about the same whether gzip later removes it or not. The blocks list cuts serialization time by up to a quarter, full grouping by up to a third. How much that matters end to end depends on the query: for the all-logs queries, the blocks list saves about 10 ms of a request that takes over 100 ms, which shows up in the speed table as v2 with all fields beating `eth_getLogs`. For USDC, where the transaction lookup dominates, it's about 4%. The client gets a similar saving when parsing.
+
+I went with the blocks list rather than full grouping: it gets most of the benefit, and every log is still a flat object that existing client code can handle, with one lookup to get its block hash or timestamp.
+
+## Comparison: Monad's MIP-16
+
+[MIP-16](https://github.com/monad-crypto/MIPs/pull/89) tackles the same problem from a wider angle. Instead of a better `eth_getLogs`, it proposes five `eth_query*` methods (blocks, transactions, logs, traces and native transfers) that share one request and response shape.
+
+### Where MIP-16 is different/better
+
+- **Joins solve a real problem.** Indexers often need the transaction behind a log (its sender, its calldata). Today that's one `eth_getLogs` call plus one request per transaction. MIP-16 returns the transactions in the same response, each once, no matter how many of its logs matched. In theory this could be extended in the future by adding `transaction.<field>` field selectors.
+- **It covers more than logs.** Filtering transactions by sender, recipient or function selector, and querying traces and native transfers, are things `eth_getLogs` can't do at all.
+- **Its joined arrays.** Block and transaction fields only appear once, in separate arrays, and only if you ask for them. The v2 prototype copies this for blocks: the blocks list measured above is the same layout as MIP-16's `blocks` array.
+
+### Where it could be better
+
+- **A page can't end inside a block.** If one block holds more matches than the server will return in one response, MIP-16 has no way to serve it, and the request fails with `-32005`. The rationale acknowledges this. On a chain built for high throughput, like Monad, very large blocks are more likely, not less. A cursor with a log index removes the problem.
+- **Reorgs are detected after the fact.** The next page is requested by block number, and the client compares the new page's parent hash with the hash it saw last. That works, but the server has already done the work for a page the client will throw away. Passing a block hash lets the server reject a stale cursor before scanning anything. The block-number approach is simpler, though, and still correct.
+
+## Takeaways
+
+- Field selection should be part of the spec as it's worth it.
+- Deduplication barely affects bandwith, but CPU time. Overall seems worth it.
+- Without `fields`, the server returns everything. A cheaper default would help clients that don't think about it, imho worth to consider on a **new** api.

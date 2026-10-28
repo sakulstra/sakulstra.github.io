@@ -3,9 +3,6 @@ import type { Metadata, Site, Socials } from "@types";
 export const SITE: Site = {
   TITLE: "tl;dr",
   DESCRIPTION: "Too long didn't read.",
-  EMAIL: "lukasstrassel@gmail.com",
-  NUM_POSTS_ON_HOMEPAGE: 5,
-  NUM_PROJECTS_ON_HOMEPAGE: 3,
 };
 
 export const HOME: Metadata = {
@@ -18,27 +15,15 @@ export const BLOG: Metadata = {
   DESCRIPTION: "A collection of articles on topics I am passionate about.",
 };
 
-export const PROJECTS: Metadata = {
-  TITLE: "Projects",
-  DESCRIPTION:
-    "A collection of my projects with links to repositories and live demos.",
-};
-
 export const SOCIALS: Socials = [
   {
-    NAME: "X (formerly Twitter)",
+    NAME: "Twitter",
     HREF: "https://twitter.com/sakulstra",
+    ICON: "M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z",
   },
   {
     NAME: "GitHub",
     HREF: "https://github.com/sakulstra",
-  },
-  {
-    NAME: "LinkedIn",
-    HREF: "https://www.linkedin.com/in/lukas-strassel-172592120/",
-  },
-  {
-    NAME: "Lens",
-    HREF: "https://hey.xyz/u/sakulstra",
+    ICON: "M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.75c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22",
   },
 ];
