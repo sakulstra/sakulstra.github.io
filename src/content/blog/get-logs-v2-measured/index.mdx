@@ -8,15 +8,16 @@ Anyone who has built an indexer on top of `eth_getLogs` knows the pain: no reorg
 
 ## Changes to the spec
 
-The proposal pages through the chain block by block: the client passes `fromBlockHash`, and the response returns a `cursorBlock`, the last block it scanned, to continue from. The prototype changes this in seven ways:
+The proposal pages through the chain block by block: the client passes `fromBlockHash`, and the response returns a `cursorBlock`, the last block it scanned, to continue from. The prototype changes:
 
-1. **A cursor that can stop inside a block.** The cursor is `after: { blockNumber, blockHash, logIndex? }` and is exclusive. With `logIndex` the next page resumes after that log, without it after the whole block. With a block-level cursor, a block holding more matching logs than the server returns per response can never be fetched. `fromBlock` starts the first page, `after` continues it.
-2. **Limits end the page, not the request.** Today, hitting a provider's range or result limit is an error, and the client has to guess a smaller range. In v2, `maxLogs`, `maxBlocks` and the server's own limits only make the page shorter, and the response always carries a `nextCursor`. Polling at the head works the same way: until a new block arrives, the server returns no logs and the same cursor.
-3. **The server checks for reorgs.** If the cursor's block is no longer canonical, the request fails with `-32001` and includes the canonical block at that height, so the client knows where the chains diverge. If the chain reorgs while the server is scanning, the request fails with `-32000` and the client retries. The response includes `finalizedBlock` next to `headBlock`, so the client knows how far back a reorg can reach.
-4. **`direction` instead of `limitLatest`/`limitOldest`.** `asc` (the default) or `desc`, combined with `maxLogs`. "The last 20 transfers of this token" is `{ fromBlock: "latest", direction: "desc", maxLogs: 20 }`, and it pages like any other query.
-5. **Field selection.** The client says which log fields it wants. The log's position (`blockNumber`, `logIndex`) always comes back, everything else is optional. Most indexers decode `topics` and `data` and never look at `transactionHash`. [Envio](https://envio.dev/) has had this feature forever, and Monad proposed it too in [MIP-16](https://github.com/monad-crypto/MIPs/pull/89).
-6. **Block fields once per block.** A response with 100,000 logs used to repeat `blockHash` and `blockTimestamp` on every one of them. Now a `blocks` list next to the logs states them once per block, and each log keeps only its `blockNumber`. The server already guarantees that a page comes from a single chain, so the number is enough to find a log's block in the list. The logs stay flat, so client code that reads a log still works with one extra lookup.
-7. **No `referenceHead` and `proof`.** They're placeholders for EIP-8304 and can be added once that EIP defines them.
+- Added `logIndex` to the cursor, so a page can end inside a block.
+- Replaced the `-32005` limit error with a partial page and a cursor, added `maxLogs` for a client-side limit, and a `toBlock` past the head now ends the page at the head.
+- Added the canonical block at the cursor's height to the error for a reorged cursor (`-32001`).
+- Replaced `headBlock` with `finalizedBlock`, so the client knows which logs can no longer be reorged.
+- Replaced `limitLatest`/`limitOldest` with `direction` (`asc`/`desc`).
+- Added field selection (`fields`), with only `blockNumber` and `logIndex` always returned.
+- Moved `blockHash` and `blockTimestamp` from each log into a `blocks` list, once per block.
+- Removed `referenceHead` and `proof` until EIP-8304 defines them.
 
 A request for the next page then looks like this:
 
@@ -47,7 +48,6 @@ A request for the next page then looks like this:
     …
   ],
   "nextCursor": { "blockNumber": "0x1910b52", "blockHash": "0x31d7…", "logIndex": "0x14" },
-  "headBlock": { "number": "0x1910f20", "hash": "0x…", "parentHash": "0x…" },
   "finalizedBlock": { "number": "0x1910f00", "hash": "0x…", "parentHash": "0x…" }
 }
 ```
