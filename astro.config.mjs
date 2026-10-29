@@ -6,7 +6,7 @@ import sitemap from "@astrojs/sitemap";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://astro-micro.vercel.app",
+  site: "https://sakulstra.github.io",
   integrations: [sitemap(), mdx()],
   fonts: [
     {
