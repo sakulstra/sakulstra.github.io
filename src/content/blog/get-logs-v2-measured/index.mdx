@@ -10,6 +10,7 @@ Anyone who has built an indexer on top of `eth_getLogs` knows the pain: no reorg
 
 The proposal pages through the chain block by block: the client passes `fromBlockHash`, and the response returns a `cursorBlock`, the last block it scanned, to continue from. The prototype changes:
 
+- Replaced `fromBlockHash` with `from`, which takes a block number or tag for the first page, or the previous page's cursor to continue.
 - Added `logIndex` to the cursor, so a page can end inside a block.
 - Replaced the `-32005` limit error with a partial page and a cursor, added `maxLogs` for a client-side limit, and a `toBlock` past the head now ends the page at the head.
 - Added the canonical block at the cursor's height to the error for a reorged cursor (`-32001`).
@@ -23,7 +24,7 @@ A request for the next page then looks like this:
 
 ```json
 {
-  "after": {
+  "from": {
     "blockNumber": "0x1910b38",
     "blockHash": "0x9c41…",
     "logIndex": "0x8a"
